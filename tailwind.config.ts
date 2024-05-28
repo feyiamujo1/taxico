@@ -18,9 +18,11 @@ const config: Config = {
         "dark-ash": "#444444",
         "custom-black": "#2B2B2B",
         "custom-blue": "#1F37D8",
+        "transparent-blue": "#F6F7FF",
         "surface": "#FFFAE6",
         "secondary": "#FF5F00",
         "footer-link": "#E8E8E8",
+        "form-black": "#1A1C1F"
       }
     },
   },

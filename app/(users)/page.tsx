@@ -1,10 +1,15 @@
+"use client";
 import Image from "next/image";
 import Link from "next/link";
+// import Lottie from "lottie-react";
+// import movingCarAnimation from "~/public/lottie/Car-2.lottie";
+import { DotLottiePlayer, Controls } from "@dotlottie/react-player";
+import "@dotlottie/react-player/dist/index.css";
 
 export default function Home() {
   return (
     <main>
-      <section className="h-screen 2xl:max-h-[1400px] flex flex-col justify-between box-border">
+      <section className="h-screen 2xl:max-h-[1400px] flex flex-col justify-between">
         <div className="w-11/12 md:max-w-[627px] mx-auto text-center pt-[50%] md:py-36 space-y-4">
           <h1 className="text-2xl md:text-[64px] md:leading-[77px] font-bold text-custom-black">
             Micra Shuttle Ticketing System
@@ -12,7 +17,7 @@ export default function Home() {
           <p className=" md:text-xl text-dark-ash font-light">
             Move and Pay Freely at the lowest prices with Taxico!
           </p>
-          <div className="flex text-sm sm:text-base justify-center items-center gap-3">
+          <div className="flex text-sm sm:text-base justify-center items-center gap-3 relative z-10">
             <Link
               href={"/"}
               className="py-3 px-6 rounded-3xl bg-custom-blue text-white">
@@ -25,18 +30,13 @@ export default function Home() {
             </Link>
           </div>
         </div>
-        <video
-          className="w-full h-72 object-cover object-bottom"
-          controls={false}
-          loop
-          autoPlay
-          muted
-          preload="none">
-          <source src="/videos/moving-car.mov" type="video/mp4" />
-          Your browser does not support the video tag.
-        </video>
+        <DotLottiePlayer
+          src={"/lottie/Car-2.lottie"}
+          className="-mt-[40%] w-full overflow-hidden z-0"
+          autoplay
+          loop></DotLottiePlayer>
       </section>
-      <section className="w-11/12 2xl:w-[1400px] py-8 md:py-16 mx-auto flex flex-col md:flex-row gap-8 box-border">
+      <section className="w-11/12 2xl:w-[1400px] py-8 md:py-16 mx-auto flex flex-col md:flex-row gap-8 md:gap-12 box-border">
         <div className="w-full md:w-1/2 flex justify-center items-center bg-surface p-8 rounded-[32px]">
           <Image
             src="/images/Mobile-Mock.png"
@@ -46,24 +46,28 @@ export default function Home() {
             className="w-full md:w-fit"
           />
         </div>
-        <div className="w-full md:w-1/2 bg-secondary rounded-[32px] p-4 md:px-6 md:py-8 flex flex-col justify-between">
-          <div className="bg-white rounded-[32px] w-full h-[300px] mb-16 md:mb-0"></div>
-          <div className="space-y-3 md:space-y-6">
-            <p className="text-white text-xl md:text-3xl font-semibold">
-              Start using Taxico’s Ticketing System today and change the way you
-              move
-            </p>
-            <div className="flex items-center gap-3">
-              <Link
-                href={"/"}
-                className="py-3 px-6 rounded-3xl bg-custom-blue text-white">
-                For Commuters
-              </Link>
-              <Link href={"/"} className="text-white">
-                For Drivers
-              </Link>
+        <div className="w-full md:w-1/2 rounded-[32px] flex flex-col space-y-3 md:space-y-6">
+          <div className="bg-transparent-blue flex flex-col gap-3 md:gap-6 px-4 py-6 md:px-6 md:py-8 rounded-[32px] w-full h-full mb-16 md:mb-0 ">
+            <div className="w-full h-fit md:h-[300px] border">
+              <Image
+                src={"/images/ticketcard.png"}
+                alt="ticket card"
+                className="w-full h-auto md:h-full"
+                height={300}
+                width={300}
+              />
             </div>
+            <p className=" text-xl md:text-[32px] md:leading-10 font-semibold mt-4">
+              Start using Taxico’s Ticketing System today and change the way you
+              move around Ife
+            </p>
+            <p className=" text-custom-blue underline text-base md:text-2xl font-semibold">
+              Get Started today
+            </p>
           </div>
+          <p className="w-full bg-custom-blue text-white text-center text-sm px-2.5 py-3 md:py-4 md:text-lg rounded-[32px] font-semibold">
+            Payments powered by Paystack
+          </p>
         </div>
       </section>
       <section className="w-11/12 2xl:w-[1400px] py-8 md:py-8 md:pb-16 mx-auto space-y-8 md:space-y-20 box-border">
