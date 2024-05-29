@@ -1,9 +1,7 @@
 "use client";
 import Image from "next/image";
 import Link from "next/link";
-// import Lottie from "lottie-react";
-// import movingCarAnimation from "~/public/lottie/Car-2.lottie";
-import { DotLottiePlayer, Controls } from "@dotlottie/react-player";
+import { DotLottiePlayer } from "@dotlottie/react-player";
 import "@dotlottie/react-player/dist/index.css";
 
 export default function Home() {
@@ -19,12 +17,12 @@ export default function Home() {
           </p>
           <div className="flex text-sm sm:text-base justify-center items-center gap-3 relative z-10">
             <Link
-              href={"/"}
+              href={"/commuter"}
               className="py-3 px-6 rounded-3xl bg-custom-blue text-white">
               Book Ticket
             </Link>
             <Link
-              href={"/"}
+              href={"/driver"}
               className="py-3 px-6 rounded-3xl border border-dark-ash">
               Sign up to drive
             </Link>
