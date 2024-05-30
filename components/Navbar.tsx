@@ -9,7 +9,7 @@ const Navbar = () => {
         <Image src={"/icon.png"} height={26} width={106} alt="logo" />
       </Link>
       <div className="flex items-center gap-3 font-medium">
-        <Link href={"/"} className="hover:text-custom-blue">
+        <Link href={"/login"} className="hover:text-custom-blue">
           Login
         </Link>
         <Link href={"/signin"} className="bg-custom-ash py-3 px-6 rounded-3xl hover:text-custom-blue">

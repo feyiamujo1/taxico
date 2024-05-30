@@ -17,12 +17,12 @@ export default function Home() {
           </p>
           <div className="flex text-sm sm:text-base justify-center items-center gap-3 relative z-10">
             <Link
-              href={"/commuter"}
+              href={"/dashboard"}
               className="py-3 px-6 rounded-3xl bg-custom-blue text-white">
               Book Ticket
             </Link>
             <Link
-              href={"/driver"}
+              href={"/driver-signup"}
               className="py-3 px-6 rounded-3xl border border-dark-ash">
               Sign up to drive
             </Link>
@@ -46,7 +46,7 @@ export default function Home() {
         </div>
         <div className="w-full md:w-1/2 rounded-[32px] flex flex-col space-y-3 md:space-y-6">
           <div className="bg-transparent-blue flex flex-col gap-3 md:gap-6 px-4 py-6 md:px-6 md:py-8 rounded-[32px] w-full h-full mb-16 md:mb-0 ">
-            <div className="w-full h-fit md:h-[300px] border">
+            <div className="w-full h-fit md:h-[300px]">
               <Image
                 src={"/images/ticketcard.png"}
                 alt="ticket card"

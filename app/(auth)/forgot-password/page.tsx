@@ -1,15 +1,14 @@
-import Link from "next/link";
+import Link from 'next/link'
+import React from 'react'
 
-import LoginForm from "~/components/LoginForm";
-
-export default function LoginPage() {
+const ForgotPasswordPage = () => {
   return (
     <div className="mb-10 md:mb-0">
       <p className="text-xl font-medium md:text-3xl mb-8 text-custom-black">
         Log in to your account
       </p>
-      <LoginForm />
-      {/* <div className="mt-3.5">
+      {/* <ForgotPassw /> */}
+      <div className="mt-3.5">
         <p className="text-center text-[13px]">
           Forgot your password?{"  "}
           <Link
@@ -18,7 +17,9 @@ export default function LoginPage() {
             Reset it here?
           </Link>
         </p>
-      </div> */}
+      </div>
     </div>
-  );
+  )
 }
+
+export default ForgotPasswordPage
