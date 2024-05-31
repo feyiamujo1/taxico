@@ -2,7 +2,6 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   HiHome,
-  HiOutlineShieldCheck,
   HiOutlineTruck,
   HiOutlineUser,
   HiOutlineUserGroup,
@@ -21,7 +20,7 @@ const SideBar = () => {
           <p className=" font-medium w-[190px] truncate">
             Oluwafeyisayomi Amujoyegbe
           </p>
-          <p className="text-[13px] font-semibold -mt-0.5">Commuter</p>
+          <p className="text-[13px] font-semibold -mt-0.5">@feyiamujo</p>
         </div>
       </div>
       <div className="mt-12 w-[235px] mx-auto space-y-6">
@@ -34,22 +33,14 @@ const SideBar = () => {
           <p className=" text-sm font-medium">Home</p>
         </Link>
         <Link
-          href="/dashboard/wallet"
+          href="/dashboard/transactions"
           className={`w-full flex items-center gap-3 transition-all duration-300 ${
-            pathname.includes("/dashboard/wallet") ? "text-custom-blue" : "text-link-ash"
-          }`}>
-          <HiOutlineWallet className="text-[22px]" />
-          <p className=" text-sm font-medium">Wallet</p>
-        </Link>
-        <Link
-          href="/dashboard/verification"
-          className={`w-full flex items-center gap-3 transition-all duration-300 ${
-            pathname.includes("/verification")
+            pathname.includes("/dashboard/transactions")
               ? "text-custom-blue"
               : "text-link-ash"
           }`}>
-          <HiOutlineShieldCheck className="text-[22px]" />
-          <p className=" text-sm font-medium">Verification</p>
+          <HiOutlineWallet className="text-[22px]" />
+          <p className=" text-sm font-medium">Transactions</p>
         </Link>
         <Link
           href="/dashboard/drivers"

@@ -14,15 +14,13 @@ const DashboardHeaderDescription = ({ role }: { role: string }) => {
             ? "hidden"
             : "w-11/12 mx-auto py-5 md:py-7 space-y-1"
         }>
-        <p className=" text-lg font-medium">
-          {currentRoute === "/dashboard" && role === "commuter"
-            ? "Manage your tickets"
-            : currentRoute === "/dashboard" && role === "driver"
-            ? "Manage your wallets"
+        <p className="text-base md:text-lg font-medium">
+          {currentRoute === "/dashboard" && role === "commuter" || role === "driver"
+            ? "Manage your wallet"
             : currentRoute === "/dashboard" && role === "admin"
             ? "Analytics"
-            : currentRoute.includes("/wallet")
-            ? "Manage your wallet"
+            : currentRoute.includes("/transaction")
+            ? "Manage your transactions"
             : currentRoute.includes("/verification")
             ? "Verification Successful"
             : currentRoute.includes("/drivers")
@@ -31,15 +29,15 @@ const DashboardHeaderDescription = ({ role }: { role: string }) => {
             ? "All Users"
             : null}
         </p>
-        <p className="text-link-ash text-sm">
+        <p className="text-link-ash text-xs md:text-sm">
           {currentRoute === "/dashboard" && role === "commuter"
-            ? "See your used and unused tickets"
+            ? "All your transaction logs are here"
             : currentRoute === "/dashboard" && role === "driver"
-            ? "See your balance and initiate withdrawals"
+            ? "View current balance, transactions and initiate withdrawals"
             : currentRoute === "/dashboard" && role === "admin"
             ? "All the analytics for your Taxico account"
-            : currentRoute.includes("/wallet")
-            ? "All your transaction logs are here"
+            : currentRoute.includes("/transaction")
+            ? "See all the transactions happening on your account"
             : currentRoute.includes("/verification-pending")
             ? "Your verification is still pending"
             : currentRoute.includes("/drivers")

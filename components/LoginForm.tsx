@@ -34,8 +34,7 @@ export default function LoginForm() {
     setError("");
 
     try {
-      const res = await signIn("sanity-login", {
-        redirect: false,
+      const res = await signIn("login-url", {
         email: value.email,
         password: value.password
       });
@@ -44,8 +43,7 @@ export default function LoginForm() {
         setError("Invalid email or password.");
         return;
       }
-
-      router.push("/");
+      router.push("/dashboard");
     } catch (error) {
       setError("Something went wrong. Please try again later.");
     } finally {

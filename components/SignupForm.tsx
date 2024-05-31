@@ -76,26 +76,6 @@ export default function SignupForm() {
         onSubmit={form.handleSubmit(onSubmit)}
         method="post"
         className="space-y-3">
-        <FormField
-          control={form.control}
-          name="profilePicture"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel className="text-form-black text-sm">
-                Profile Picture
-              </FormLabel>
-              <FormControl>
-                <Input
-                  className="focus:ring-1 focus:ring-white rounded-lg border border-custom-ash px-2.5 h-12 bg-custom-ash border-dashed"
-                  type="name"
-                  placeholder="Drop profile picture or browse"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
         <div className="flex flex-col md:flex-row justify-between gap-3">
           <div className="w-1/2">
             <FormField
