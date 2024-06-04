@@ -26,7 +26,7 @@ const SideBar = () => {
       <div className="mt-12 w-[235px] mx-auto space-y-6">
         <Link
           href="/dashboard"
-          className={`w-full flex items-center gap-3 transition-all duration-300 ${
+          className={`w-full flex items-center gap-3 transition-all duration-300 hover:text-black ${
             pathname === "/dashboard" ? "text-custom-blue" : "text-link-ash"
           }`}>
           <HiHome className="text-[22px]" />
@@ -34,7 +34,7 @@ const SideBar = () => {
         </Link>
         <Link
           href="/dashboard/transactions"
-          className={`w-full flex items-center gap-3 transition-all duration-300 ${
+          className={`w-full flex items-center gap-3 transition-all duration-300 hover:text-black ${
             pathname.includes("/dashboard/transactions")
               ? "text-custom-blue"
               : "text-link-ash"
@@ -44,7 +44,7 @@ const SideBar = () => {
         </Link>
         <Link
           href="/dashboard/drivers"
-          className={`w-full flex items-center gap-3 transition-all duration-300 ${
+          className={`w-full flex items-center gap-3 transition-all duration-300 hover:text-black ${
             pathname.includes("/drivers") ? "text-custom-blue" : "text-link-ash"
           }`}>
           <HiOutlineTruck className="text-[22px]" />
@@ -52,7 +52,7 @@ const SideBar = () => {
         </Link>
         <Link
           href="/dashboard/user-accounts"
-          className={`w-full flex items-center gap-3 transition-all duration-300 ${
+          className={`w-full flex items-center gap-3 transition-all duration-300 hover:text-black ${
             pathname.includes("/user-accounts")
               ? "text-custom-blue"
               : "text-link-ash"
@@ -62,7 +62,7 @@ const SideBar = () => {
         </Link>
         <Link
           href="/dashboard/account"
-          className={`w-full flex items-center gap-3 transition-all duration-300 ${
+          className={`w-full flex items-center gap-3 transition-all duration-300 hover:text-black ${
             pathname.includes("/account") ? "text-custom-blue" : "text-link-ash"
           }`}>
           <HiOutlineUser className="text-[22px]" />

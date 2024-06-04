@@ -1,4 +1,3 @@
-import React from "react";
 import UsersTable from "~/components/dashboard/UsersTable";
 
 const DriversPage = () => {
@@ -6,65 +5,64 @@ const DriversPage = () => {
     {
       name: "Chioma Okafor",
       email: "chiomaokafor@gmail.com",
-      userType: "driver",
-      lastAccess: "05/05/2024"
+      status: "Verified",
+      licenseNumber: "HJ********DN"
     },
     {
       name: "Adebayo Adekunle",
       email: "adebayoadekunle@gmail.com",
-      userType: "commuter",
-      lastAccess: "12/05/2024"
+      status: "Pending",
+      licenseNumber: "HJ********DN"
     },
     {
       name: "Folake Adebisi",
       email: "folakeadebisi@gmail.com",
-      userType: "commuter",
-      lastAccess: "19/05/2024"
+      status: "Pending",
+      licenseNumber: "HJ********DN"
     },
     {
       name: "Ifeanyi Nwankwo",
       email: "ifeanyinwankwo@gmail.com",
-      userType: "driver",
-      lastAccess: "23/05/2024"
+      status: "Verified",
+      licenseNumber: "HJ********DN"
     },
     {
       name: "Ngozi Chukwu",
       email: "ngozichukwu@gmail.com",
-      userType: "commuter",
-      lastAccess: "15/05/2024"
+      status: "Pending",
+      licenseNumber: "HJ********DN"
     },
     {
       name: "Yemi Alade",
       email: "yemialade@gmail.com",
-      userType: "driver",
-      lastAccess: "08/05/2024"
+      status: "Verified",
+      licenseNumber: "HJ********DN"
     },
     {
       name: "Chinedu Uche",
       email: "chineduuche@gmail.com",
-      userType: "commuter",
-      lastAccess: "26/05/2024"
+      status: "Pending",
+      licenseNumber: "HJ********DN"
     },
     {
       name: "Aisha Bello",
       email: "aishabello@gmail.com",
-      userType: "driver",
-      lastAccess: "21/05/2024"
+      status: "Verified",
+      licenseNumber: "HJ********DN"
     },
     {
       name: "Samuel Oluwaseun",
       email: "samueloluwaseun@gmail.com",
-      userType: "commuter",
-      lastAccess: "14/05/2024"
+      status: "Pending",
+      licenseNumber: "HJ********DN"
     },
     {
       name: "Bola Tinubu",
       email: "bolatinubu@gmail.com",
-      userType: "driver",
-      lastAccess: "10/05/2024"
+      status: "Verified",
+      licenseNumber: "HJ********DN"
     }
   ];
-
   return (
     <>
       <UsersTable type={"Driver"} data={driverInfo} />

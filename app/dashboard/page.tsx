@@ -3,6 +3,7 @@ import ShortInformationContainer from "~/components/dashboard/ShortInformationCo
 import PaystackIntegration from "~/components/dashboard/PaystackIntegration";
 import { HiOutlineChevronRight } from "react-icons/hi";
 import { GoArrowDownLeft, GoArrowUpRight } from "react-icons/go";
+import DriverPopup from "~/components/dashboard/DriverProfilePopup";
 
 const CommutersHomePage = () => {
   const TransactionData = [
@@ -81,7 +82,7 @@ const CommutersHomePage = () => {
   ];
   const currentDate = new Date();
   let currentMonth = currentDate.getMonth();
-  const role = "admin";
+  const role: any = "commuter";
   const monthNames = [
     "January",
     "February",
@@ -141,7 +142,7 @@ const CommutersHomePage = () => {
                 )}
               </p>
               <p className="font-semibold text-lg md:text-xl mt-1">
-                {role !== "commuter" && "NGN"}6
+                {role !== "commuter" && "NGN"} 6,000
               </p>
             </div>
           </div>

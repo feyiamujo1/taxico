@@ -19,15 +19,11 @@ const DashboardHeader = ({ role }: { role: string }) => {
             : ""}
         </h2>
         <div className="flex gap-3 items-center">
-          {currentRoute === "/dashboard" ? (
-            <button className="py-3 px-6 rounded-3xl text-sm 2xl:text-base bg-custom-blue text-white">
+          {currentRoute === "/dashboard" && role === "commuter" && (
+            <button className="py-2.5 px-4 rounded-3xl text-sm 2xl:text-base bg-custom-blue text-white">
               Pay Driver
             </button>
-          ) : currentRoute === "/dashboard/wallet" ? (
-            <button className="py-3 px-6 rounded-3xl text-sm 2xl:text-base bg-custom-blue text-white">
-              Topup
-            </button>
-          ) : null}
+          )}
         </div>
       </div>
     </div>

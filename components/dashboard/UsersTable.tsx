@@ -1,4 +1,8 @@
-import React, { use } from "react";
+"use client";
+import { useState } from "react";
+import { HiOutlineArrowLeft } from "react-icons/hi2";
+import { PiArrowRight } from "react-icons/pi";
+import DriverPopup from "./DriverProfilePopup";
 
 const UsersTable = ({
   type,
@@ -14,6 +18,7 @@ const UsersTable = ({
     status?: string;
   }[];
 }) => {
+  const [showDriverPopup, setShowDriverPopup] = useState(false);
   return (
     <div>
       <div className="flex justify-between items-center">
@@ -22,13 +27,16 @@ const UsersTable = ({
           Filter
         </button>
       </div>
-      <table className="w-full table-auto">
+      <table className="w-full table-auto overflow-x-scroll">
         <colgroup>
           <col style={{ width: "5%" }} />
-          <col style={{ width: "30%" }} />
+          <col
+            style={type === "Driver" ? { width: "20%" } : { width: "30%" }}
+          />
           <col style={{ width: "30%" }} />
           <col style={{ width: "20%" }} />
           <col style={{ width: "15%" }} />
+          {type === "Driver" && <col style={{ width: "10%" }} />}
         </colgroup>
         <thead className="!text-left font-normal border-b-[0.5px]">
           <tr>
@@ -49,6 +57,7 @@ const UsersTable = ({
                 <th className="py-4 font-medium text-sm md:text-base 2xl:text-lg">
                   Verification Status
                 </th>
+                <th className="py-4 font-medium text-sm md:text-base 2xl:text-lg"></th>
               </>
             ) : (
               <>
@@ -68,16 +77,51 @@ const UsersTable = ({
               <td className="py-3 text-sm 2xl:text-base">{id + 1}</td>
               <td className="py-3 text-sm 2xl:text-base">{user.name}</td>
               <td className="py-3 text-sm 2xl:text-base">{user.email}</td>
-              <td className="py-3 text-sm 2xl:text-base capitalize">{user?.userType}</td>
-              <td className="py-3 text-sm 2xl:text-base">{user?.lastAccess}</td>
-              <td className="py-3 text-sm 2xl:text-base">
-                {user?.licenseNumber}
-              </td>
-              <td className="py-3 text-sm 2xl:text-base">{user?.status}</td>
+              {type === "Driver" ? (
+                <>
+                  <td className="py-3 text-sm 2xl:text-base">
+                    {user?.licenseNumber}
+                  </td>
+                  <td className="py-3 text-sm 2xl:text-base">{user?.status}</td>
+                  <td className="py-3 text-sm 2xl:text-base text-right">
+                    <DriverPopup />
+                  </td>
+                </>
+              ) : (
+                <>
+                  <td className="py-3 text-sm 2xl:text-base capitalize">
+                    {user?.userType}
+                  </td>
+                  <td className="py-3 text-sm 2xl:text-base">
+                    {user?.lastAccess}
+                  </td>
+                </>
+              )}
             </tr>
           ))}
         </tbody>
       </table>
+      <div className="flex justify-between items-center mt-7 pb-7">
+        <button className="flex gap-1 items-center text-sm md:text-base text-[#BFBFBF]">
+          <HiOutlineArrowLeft className="md:text-lg" />
+          Previous
+        </button>
+        <div className="flex items-center gap-3">
+          <p className="text-sm md:text-base px-2.5 py-0.5 rounded bg-[#F5F5F5] text-[#BFBFBF] ">
+            1
+          </p>
+          <p className="text-sm md:text-base px-2.5 py-0.5 rounded bg-[#F5F5F5] text-[#BFBFBF] ">
+            2
+          </p>
+          <p className="text-sm md:text-base px-2.5 py-0.5 rounded bg-[#F5F5F5] text-[#BFBFBF] ">
+            3
+          </p>
+        </div>
+        <button className="flex gap-1 items-center text-base text-[#BFBFBF]">
+          Next
+          <PiArrowRight className="md:text-lg" />
+        </button>
+      </div>
     </div>
   );
 };

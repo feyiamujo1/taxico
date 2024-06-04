@@ -33,7 +33,7 @@ const TransactionTable = ({
           </>
         )}
       </div>
-      <table className="w-full table-auto">
+      <table className="w-full table-auto overflow-x-scroll">
         <colgroup>
           <col style={{ width: "5%" }} />
           <col style={{ width: "25%" }} />
@@ -82,7 +82,7 @@ const TransactionTable = ({
               </td>
               <td className={`py-3 text-sm 2xl:text-base text-center`}>
                 <p
-                  className={` p-1 rounded-3xl text-white w-[95px] ${
+                  className={` p-1 rounded-3xl text-white w-[100px] ${
                     transaction.status === "Completed"
                       ? "bg-[#37AF35]"
                       : "bg-[#EF2929]"
@@ -95,7 +95,7 @@ const TransactionTable = ({
         </tbody>
       </table>
       {pathname !== "/dashboard" && (
-        <div className="flex justify-between items-center mt-7">
+        <div className="flex justify-between items-center mt-7 pb-7">
           <button className="flex gap-1 items-center text-sm md:text-base text-[#BFBFBF]">
             <HiOutlineArrowLeft className="md:text-lg" />
             Previous
