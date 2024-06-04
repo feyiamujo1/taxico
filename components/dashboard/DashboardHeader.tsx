@@ -1,3 +1,5 @@
+
+import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const DashboardHeader = ({ role }: { role: string }) => {
@@ -20,9 +22,9 @@ const DashboardHeader = ({ role }: { role: string }) => {
         </h2>
         <div className="flex gap-3 items-center">
           {currentRoute === "/dashboard" && role === "commuter" && (
-            <button className="py-2.5 px-4 rounded-3xl text-sm 2xl:text-base bg-custom-blue text-white">
+            <Link href="/dashboard/pay-driver" className="py-2.5 px-4 rounded-3xl text-sm 2xl:text-base bg-custom-blue text-white">
               Pay Driver
-            </button>
+            </Link>
           )}
         </div>
       </div>

@@ -1,7 +1,6 @@
 import * as Dialog from "@radix-ui/react-dialog";
 import Image from "next/image";
 import { HiOutlineX } from "react-icons/hi";
-import { PiArrowRight } from "react-icons/pi";
 
 const DriverProfilePopup = () => {
   return (

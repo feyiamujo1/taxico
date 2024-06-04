@@ -8,6 +8,12 @@
   inset: 0;
   animation: overlayShow 150ms cubic-bezier(0.16, 1, 0.3, 1);
 }
+.DialogOverlayTwo {
+  background-color: #f6f7ff;
+  position: fixed;
+  inset: 0;
+  animation: overlayShow 150ms cubic-bezier(0.16, 1, 0.3, 1);
+}
 
 .DialogContent {
   background-color: white;
