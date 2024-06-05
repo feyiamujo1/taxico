@@ -1,11 +1,11 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { GrStorage } from "react-icons/gr";
 import {
   HiHome,
   HiOutlineTruck,
   HiOutlineUser,
   HiOutlineUserGroup,
-  HiOutlineWallet
 } from "react-icons/hi2";
 
 const SideBar = () => {
@@ -39,7 +39,7 @@ const SideBar = () => {
               ? "text-custom-blue"
               : "text-link-ash"
           }`}>
-          <HiOutlineWallet className="text-[22px]" />
+          <GrStorage className="text-[22px]" />
           <p className=" text-sm font-medium">Transactions</p>
         </Link>
         <Link

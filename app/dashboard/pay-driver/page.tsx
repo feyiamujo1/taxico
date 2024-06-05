@@ -1,20 +1,21 @@
 "use client";
 import { Loader2 } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 import { useState } from "react";
 import { HiMiniArrowLongLeft } from "react-icons/hi2";
 
-const page = () => {
+const PayDriverPage = () => {
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(false);
   const [stage, setStage] = useState(1);
   const [textInput, setTextInput] = useState("");
   return (
     <div className=" px-3 py-4 md:px-6 md:py-8 space-y-4 md:space-y-6">
-      <div className="flex gap-3 md:gap-4 items-center">
+      <Link href={"/dashboard"} className="flex gap-3 md:gap-4 items-center">
         <HiMiniArrowLongLeft className="text-2xl md:text-3xl" />
         <Image src={"/icon.png"} height={26} width={106} alt="logo" />
-      </div>
+      </Link>
       <div className="pt-[90px]">
         <h2 className="text-[#2B2B2B] font-medium text-xl md:text-[28px] text-center">
           Send money to a driver
@@ -72,4 +73,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default PayDriverPage;
