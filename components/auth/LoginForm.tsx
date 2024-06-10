@@ -1,4 +1,4 @@
-"use client";
+"use client"
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -10,7 +10,7 @@ import * as z from "zod";
 
 import { LoginFormSchema } from "~/lib/validation-schema";
 
-import { Button } from "./ui/button";
+import { Button } from "../ui/button";
 import {
   Form,
   FormControl,
@@ -18,8 +18,8 @@ import {
   FormItem,
   FormLabel,
   FormMessage
-} from "./ui/form";
-import { Input } from "./ui/input";
+} from "../ui/form";
+import { Input } from "../ui/input";
 
 export default function LoginForm() {
   const [loading, setLoading] = useState(false);
@@ -102,8 +102,8 @@ export default function LoginForm() {
         )}
         <div className="pt-4">
           <Button
-            className={`w-full font-medium rounded-3xl text-black bg-[#F3F3F3] px-2.5 py-6 text-sm hover:bg-custom-blue transition-all duration-300 hover:text-white`}
-            disabled={loading}
+            className={`w-full font-medium rounded-3xl disabled:text-black text-white px-2.5 py-6 text-sm bg-custom-blue disabled:bg-[#F3F3F3] transition-all duration-300`}
+            disabled={loading || form.getValues("email") === undefined || form.getValues("password") === undefined || form.getValues("email") === "" || form.getValues("password") === ""}
             type="submit">
             {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             Log In

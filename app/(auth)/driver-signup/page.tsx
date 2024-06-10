@@ -1,6 +1,5 @@
 import Link from "next/link";
-import DriverSignUp from "~/components/DriverSignupForm";
-import SignupForm from "~/components/SignupForm";
+import DriverSignUp from "~/components/auth/DriverSignupForm";
 
 export default function SignUpPage() {
   return (

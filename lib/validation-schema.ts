@@ -8,7 +8,6 @@ export const LoginFormSchema = z.object({
 export const SignupFormSchema = z.object({
   firstName: z.string().min(1, { message: "Name can not be empty" }),
   lastName: z.string().min(1, { message: "Name can not be empty" }),
-  profilePicture: z.string().min(1, { message: "Name can not be empty" }),
   email: z.string().email({ message: "Please enter a valid email address" }),
   password: z.string().min(5, { message: "Must be 5 or more characters long" }),
 });
