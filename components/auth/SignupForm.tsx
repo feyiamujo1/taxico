@@ -1,10 +1,11 @@
 "use client";
 
+import { createClient } from "~/utils/supabase/client";
+
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
-import { signIn } from "next-auth/react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 
@@ -20,53 +21,32 @@ import {
   FormMessage
 } from "../ui/form";
 import { Input } from "../ui/input";
+import { revalidatePath } from "next/cache";
 
 export default function SignupForm() {
   const [loading, setLoading] = useState(false);
   const [serverError, setServerError] = useState("");
-  const router = useRouter();
   const form = useForm<z.infer<typeof SignupFormSchema>>({
     resolver: zodResolver(SignupFormSchema)
   });
 
   const onSubmit = async (value: z.infer<typeof SignupFormSchema>) => {
+    const supabase = createClient();
     setLoading(true);
     setServerError("");
 
-    try {
-      const newUser = await (
-        await fetch("/api/sanity/signUp", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify(value)
-        })
-      ).json();
+    const data = value;
 
-      if (newUser?.error) {
-        form.setError("email", {
-          type: "custom",
-          message: newUser.error
-        });
-        return;
-      }
+    const { error } = await supabase.auth.signUp(data);
 
-      const res = await signIn("sanity-login", {
-        redirect: false,
-        email: value.email,
-        password: value.password
-      });
-
-      if (res?.error) {
-        throw new Error(res.error);
-      }
-
-      router.push("/");
-    } catch (error) {
-      setServerError("Something went wrong. Please try again later.");
-    } finally {
+    if (error) {
+      setServerError(error.message);
       setLoading(false);
+    } else {
+      setServerError("");
+      setLoading(false);
+      revalidatePath("/", "layout");
+      redirect("/dashboard")
     }
   };
 
@@ -88,7 +68,7 @@ export default function SignupForm() {
                   </FormLabel>
                   <FormControl>
                     <Input
-                      className="focus:ring-1 focus:ring-white rounded-lg !bg-white border border-custom-ash px-2.5 h-12 md:w-full"
+                      className="focus:ring-1 focus:ring-white rounded-lg !bg-white border border-custom-ash focus:border-custom-blue px-2.5 h-12 md:w-full"
                       type="text"
                       placeholder="Your firstname"
                       {...field}
@@ -110,7 +90,7 @@ export default function SignupForm() {
                   </FormLabel>
                   <FormControl>
                     <Input
-                      className="focus:ring-1 focus:ring-white rounded-lg !bg-white border border-custom-ash px-2.5 h-12 md:w-full"
+                      className="focus:ring-1 focus:ring-white rounded-lg !bg-white border border-custom-ash focus:border-custom-blue px-2.5 h-12 md:w-full"
                       type="text"
                       placeholder="Your lastname"
                       {...field}
@@ -132,9 +112,29 @@ export default function SignupForm() {
               </FormLabel>
               <FormControl>
                 <Input
-                  className="focus:ring-1 focus:ring-white rounded-lg !bg-white border border-custom-ash px-2.5 h-12"
+                  className="focus:ring-1 focus:ring-white rounded-lg !bg-white border border-custom-ash focus:border-custom-blue px-2.5 h-12"
                   type="email"
                   placeholder="Your email"
+                  {...field}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="tag"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel className="text-form-black text-sm">
+                Tag
+              </FormLabel>
+              <FormControl>
+                <Input
+                  className="focus:ring-1 focus:ring-white rounded-lg !bg-white border border-custom-ash focus:border-custom-blue px-2.5 h-12"
+                  type="tag"
+                  placeholder="Your Tag"
                   {...field}
                 />
               </FormControl>
@@ -152,7 +152,7 @@ export default function SignupForm() {
               </FormLabel>
               <FormControl>
                 <Input
-                  className="focus:ring-1 focus:ring-white rounded-lg !bg-white border border-custom-ash px-2.5 h-12"
+                  className="focus:ring-1 focus:ring-white rounded-lg !bg-white border border-custom-ash focus:border-custom-blue px-2.5 h-12"
                   type="password"
                   placeholder="Your password"
                   {...field}

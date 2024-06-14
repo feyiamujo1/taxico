@@ -49,7 +49,7 @@ const DragFileUpload = ({
       </p>
       <div
         {...getRootProps({ className: "dropzone" })}
-        className="border border-dashed flex items-center gap-5 px-3 py-3 rounded-lg h-12 cursor-pointer">
+        className="border border-dashed flex items-center gap-5 px-3 py-3 rounded-lg h-12 cursor-pointer focus:border-custom-blue">
         <input {...getInputProps()} />
 
         {!fileItem ? (

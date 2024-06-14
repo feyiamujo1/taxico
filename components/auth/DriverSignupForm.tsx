@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
 import { signIn } from "next-auth/react";
@@ -21,6 +21,8 @@ import {
 } from "../ui/form";
 import { Input } from "../ui/input";
 import DragFileUpload from "./DragFileUpload";
+import { revalidatePath } from "next/cache";
+import { createClient } from "~/utils/supabase/client";
 
 export default function DriverSignUp() {
   const [loading, setLoading] = useState(false);
@@ -32,43 +34,22 @@ export default function DriverSignUp() {
   });
 
   const onSubmit = async (value: z.infer<typeof DriverSignupFormSchema>) => {
+    const supabase = createClient();
     setLoading(true);
     setServerError("");
 
-    try {
-      const newUser = await (
-        await fetch("/api/sanity/signUp", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify(value)
-        })
-      ).json();
+    const data = value;
 
-      if (newUser?.error) {
-        form.setError("email", {
-          type: "custom",
-          message: newUser.error
-        });
-        return;
-      }
+    const { error } = await supabase.auth.signUp(data);
 
-      const res = await signIn("sanity-login", {
-        redirect: false,
-        email: value.email,
-        password: value.password
-      });
-
-      if (res?.error) {
-        throw new Error(res.error);
-      }
-
-      router.push("/");
-    } catch (error) {
-      setServerError("Something went wrong. Please try again later.");
-    } finally {
+    if (error) {
+      setServerError(error.message);
       setLoading(false);
+    } else {
+      setServerError("");
+      setLoading(false);
+      revalidatePath("/", "layout");
+      redirect("/dashboard")
     }
   };
 
@@ -91,7 +72,7 @@ export default function DriverSignUp() {
                   </FormLabel>
                   <FormControl>
                     <Input
-                      className="focus:ring-1 focus:ring-white rounded-lg !bg-white border border-custom-ash px-2.5 h-12 md:w-full"
+                      className="focus:ring-1 focus:ring-white rounded-lg !bg-white border border-custom-ash focus:border-custom-blue px-2.5 h-12 md:w-full"
                       type="text"
                       placeholder="Your firstname"
                       {...field}
@@ -113,7 +94,7 @@ export default function DriverSignUp() {
                   </FormLabel>
                   <FormControl>
                     <Input
-                      className="focus:ring-1 focus:ring-white rounded-lg !bg-white border border-custom-ash px-2.5 h-12 md:w-full"
+                      className="focus:ring-1 focus:ring-white rounded-lg !bg-white border border-custom-ash focus:border-custom-blue px-2.5 h-12 md:w-full"
                       type="text"
                       placeholder="Your lastname"
                       {...field}
@@ -135,7 +116,7 @@ export default function DriverSignUp() {
               </FormLabel>
               <FormControl>
                 <Input
-                  className="focus:ring-1 focus:ring-white rounded-lg !bg-white border border-custom-ash px-2.5 h-12"
+                  className="focus:ring-1 focus:ring-white rounded-lg !bg-white border border-custom-ash focus:border-custom-blue px-2.5 h-12"
                   type="input"
                   readOnly
                   placeholder="Driver's License"
@@ -156,7 +137,7 @@ export default function DriverSignUp() {
               </FormLabel>
               <FormControl>
                 <Input
-                  className="focus:ring-1 focus:ring-white rounded-lg !bg-white border border-custom-ash px-2.5 h-12"
+                  className="focus:ring-1 focus:ring-white rounded-lg !bg-white border border-custom-ash focus:border-custom-blue px-2.5 h-12"
                   type="email"
                   placeholder="Your license number"
                   {...field}
@@ -176,7 +157,7 @@ export default function DriverSignUp() {
               </FormLabel>
               <FormControl>
                 <Input
-                  className="focus:ring-1 focus:ring-white rounded-lg !bg-white border border-custom-ash px-2.5 h-12"
+                  className="focus:ring-1 focus:ring-white rounded-lg !bg-white border border-custom-ash focus:border-custom-blue px-2.5 h-12"
                   type="email"
                   placeholder="Your registration number"
                   {...field}
@@ -196,7 +177,7 @@ export default function DriverSignUp() {
               </FormLabel>
               <FormControl>
                 <Input
-                  className="focus:ring-1 focus:ring-white rounded-lg !bg-white border border-custom-ash px-2.5 h-12"
+                  className="focus:ring-1 focus:ring-white rounded-lg !bg-white border border-custom-ash focus:border-custom-blue px-2.5 h-12"
                   type="email"
                   placeholder="Your email"
                   {...field}
@@ -216,7 +197,7 @@ export default function DriverSignUp() {
               </FormLabel>
               <FormControl>
                 <Input
-                  className="focus:ring-1 focus:ring-white rounded-lg !bg-white border border-custom-ash px-2.5 h-12"
+                  className="focus:ring-1 focus:ring-white rounded-lg !bg-white border border-custom-ash focus:border-custom-blue px-2.5 h-12"
                   type="password"
                   placeholder="Your password"
                   {...field}

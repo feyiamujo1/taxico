@@ -1,10 +1,9 @@
-"use client"
+"use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { redirect } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
-import { signIn } from "next-auth/react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 
@@ -20,34 +19,33 @@ import {
   FormMessage
 } from "../ui/form";
 import { Input } from "../ui/input";
+import { createClient } from "~/utils/supabase/client";
+import { revalidatePath } from "next/cache";
 
 export default function LoginForm() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const router = useRouter();
   const form = useForm<z.infer<typeof LoginFormSchema>>({
     resolver: zodResolver(LoginFormSchema)
   });
 
   const onSubmit = async (value: z.infer<typeof LoginFormSchema>) => {
+    const supabase = createClient();
     setLoading(true);
     setError("");
 
-    try {
-      const res = await signIn("login-url", {
-        email: value.email,
-        password: value.password
-      });
+    const data = value;
 
-      if (res?.error) {
-        setError("Invalid email or password.");
-        return;
-      }
-      router.push("/dashboard");
-    } catch (error) {
-      setError("Something went wrong. Please try again later.");
-    } finally {
+    const { error } = await supabase.auth.signInWithPassword(data);
+
+    if (error) {
+      setError(error.message);
       setLoading(false);
+    } else {
+      setError("");
+      setLoading(false);
+      revalidatePath("/", "layout");
+      redirect("/dashboard");
     }
   };
 
@@ -67,7 +65,7 @@ export default function LoginForm() {
               </FormLabel>
               <FormControl>
                 <Input
-                  className="focus:ring-1 focus:ring-white rounded-lg !bg-white border border-custom-ash px-2.5 h-12"
+                  className="focus:ring-1 focus:ring-white rounded-lg !bg-white border border-custom-ash focus:border-custom-blue px-2.5 h-12"
                   type="email"
                   placeholder="Your Email"
                   {...field}
@@ -87,7 +85,7 @@ export default function LoginForm() {
               </FormLabel>
               <FormControl>
                 <Input
-                  className="focus:ring-1 focus:ring-white rounded-lg !bg-white border border-custom-ash px-2.5 h-12"
+                  className="focus:ring-1 focus:ring-white rounded-lg !bg-white border border-custom-ash focus:border-custom-blue px-2.5 h-12"
                   type="password"
                   placeholder="Your Password"
                   {...field}
@@ -103,7 +101,13 @@ export default function LoginForm() {
         <div className="pt-4">
           <Button
             className={`w-full font-medium rounded-3xl disabled:text-black text-white px-2.5 py-6 text-sm bg-custom-blue disabled:bg-[#F3F3F3] transition-all duration-300`}
-            disabled={loading || form.getValues("email") === undefined || form.getValues("password") === undefined || form.getValues("email") === "" || form.getValues("password") === ""}
+            disabled={
+              loading ||
+              form.getValues("email") === undefined ||
+              form.getValues("password") === undefined ||
+              form.getValues("email") === "" ||
+              form.getValues("password") === ""
+            }
             type="submit">
             {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             Log In
