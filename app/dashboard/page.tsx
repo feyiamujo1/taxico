@@ -3,7 +3,6 @@ import ShortInformationContainer from "~/components/dashboard/ShortInformationCo
 import PaystackIntegration from "~/components/dashboard/PaystackIntegration";
 import { HiOutlineChevronRight } from "react-icons/hi";
 import { GoArrowDownLeft, GoArrowUpRight } from "react-icons/go";
-import DriverPopup from "~/components/dashboard/DriverProfilePopup";
 
 const CommutersHomePage = () => {
   const TransactionData = [
@@ -102,7 +101,7 @@ const CommutersHomePage = () => {
       {role === "admin" && (
         <p className="font-semibold text-lg mb-3">Financials</p>
       )}
-      <div className="flex gap-3 md:gap-6 md:flex-row">
+      <div className="w-full box-border flex gap-3 md:gap-6 md:flex-row">
         <div
           className={`w-full h-fit flex  justify-between ${
             role === "admin" ? "flex-col-reverse" : "flex-col"

@@ -1,11 +1,20 @@
 "use client";
 
 import { useState } from "react";
-import { redirect, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
-import { signIn } from "next-auth/react";
 import { useForm } from "react-hook-form";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue
+} from "~/components/ui/select";
+
 import * as z from "zod";
 
 import { DriverSignupFormSchema } from "~/lib/validation-schema";
@@ -21,35 +30,76 @@ import {
 } from "../ui/form";
 import { Input } from "../ui/input";
 import DragFileUpload from "./DragFileUpload";
-import { revalidatePath } from "next/cache";
-import { createClient } from "~/utils/supabase/client";
+import axios from "axios";
 
 export default function DriverSignUp() {
   const [loading, setLoading] = useState(false);
   const [fileItem, setFileItem] = useState<string | ArrayBuffer | null>(null);
-  const [serverError, setServerError] = useState("");
+  const [error, setError] = useState("");
   const router = useRouter();
   const form = useForm<z.infer<typeof DriverSignupFormSchema>>({
     resolver: zodResolver(DriverSignupFormSchema)
   });
 
   const onSubmit = async (value: z.infer<typeof DriverSignupFormSchema>) => {
-    const supabase = createClient();
     setLoading(true);
-    setServerError("");
+    setError("");
 
-    const data = value;
+    try {
+      const response = await axios.post(
+        `https://${process.env.NEXT_PUBLIC_SUPABASE_REF}.supabase.co/auth/v1/signup?apikey=${process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY}`,
+        {
+          email: value.email,
+          password: value.password,
+          data: {
+            role: "driver",
+            first_name: value.firstName,
+            last_name: value.lastName,
+            tag: value.tag,
+            driver_license_number: value.licenseNumber,
+            vehicle_registration_number: value.vehicleRegistrationNo,
+            profile_picture: ""
+          },
+        },
+        {
+          headers: {
+            "Content-Type": "application/json"
+          }
+        }
+      );
 
-    const { error } = await supabase.auth.signUp(data);
-
-    if (error) {
-      setServerError(error.message);
+      if (response && response?.status === 200) {
+        console.log(response.data);
+        // User has been created then
+        // Add user to table
+        const responseTwo = await axios.post(
+          `https://${process.env.NEXT_PUBLIC_SUPABASE_REF}.supabase.co/rest/v1/users?apikey=${process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY}`,
+          
+          {
+            headers: {
+              "Content-Type": "application/json"
+            }
+          }
+        );
+        if (responseTwo?.status === 201) {
+          console.log(responseTwo);
+          router.push("/login");
+        }
+      }
+    } catch (error: any) {
+      // setError("Something went wrong. Please try again later.");
+      console.log(error);
+      if (error?.response?.status === 404) {
+        setError("User not found!");
+      } else if (error?.response?.status === 401) {
+        setError("Invalid email or password!");
+      } else if (error?.response?.status === 422) {
+        setError(error.response.data.msg.replace(/,/g, ""));
+      } else {
+        setError("Something went wrong. Please try again later.");
+      }
+    } finally {
       setLoading(false);
-    } else {
-      setServerError("");
-      setLoading(false);
-      revalidatePath("/", "layout");
-      redirect("/dashboard")
     }
   };
 
@@ -111,18 +161,17 @@ export default function DriverSignUp() {
           name="governmentId"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-form-black text-sm">
-                Government Id
-              </FormLabel>
-              <FormControl>
-                <Input
-                  className="focus:ring-1 focus:ring-white rounded-lg !bg-white border border-custom-ash focus:border-custom-blue px-2.5 h-12"
-                  type="input"
-                  readOnly
-                  placeholder="Driver's License"
-                  {...field}
-                />
-              </FormControl>
+              <FormLabel>Government Id</FormLabel>
+              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select identity type" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent className="bg-white">
+                  <SelectItem value="Driver's License">Driver's License</SelectItem>
+                </SelectContent>
+              </Select>
               <FormMessage />
             </FormItem>
           )}
@@ -138,7 +187,7 @@ export default function DriverSignUp() {
               <FormControl>
                 <Input
                   className="focus:ring-1 focus:ring-white rounded-lg !bg-white border border-custom-ash focus:border-custom-blue px-2.5 h-12"
-                  type="email"
+                  type="text"
                   placeholder="Your license number"
                   {...field}
                 />
@@ -158,8 +207,26 @@ export default function DriverSignUp() {
               <FormControl>
                 <Input
                   className="focus:ring-1 focus:ring-white rounded-lg !bg-white border border-custom-ash focus:border-custom-blue px-2.5 h-12"
-                  type="email"
+                  type="text"
                   placeholder="Your registration number"
+                  {...field}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="tag"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel className="text-form-black text-sm">Tag</FormLabel>
+              <FormControl>
+                <Input
+                  className="focus:ring-1 focus:ring-white rounded-lg !bg-white border border-custom-ash focus:border-custom-blue px-2.5 h-12 lowercase"
+                  type="text"
+                  placeholder="Your Tag"
                   {...field}
                 />
               </FormControl>
@@ -207,8 +274,8 @@ export default function DriverSignUp() {
             </FormItem>
           )}
         />
-        {serverError && (
-          <div className="text-sm font-medium text-red-500">{serverError}</div>
+        {error && (
+          <div className="text-sm font-medium text-red-500 ">{error}</div>
         )}
         <div className="pt-4">
           <Button

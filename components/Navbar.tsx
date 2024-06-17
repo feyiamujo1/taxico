@@ -12,7 +12,7 @@ const Navbar = () => {
         <Link href={"/login"} className="hover:text-custom-blue">
           Login
         </Link>
-        <Link href={"/signin"} className="bg-custom-ash py-3 px-6 rounded-3xl hover:text-custom-blue">
+        <Link href={"/signup"} className="bg-custom-ash py-3 px-6 rounded-3xl hover:text-custom-blue">
           Sign Up
         </Link>
       </div>

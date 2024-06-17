@@ -38,30 +38,30 @@ const UsersTable = ({
           <col style={{ width: "15%" }} />
           {type === "Driver" && <col style={{ width: "10%" }} />}
         </colgroup>
-        <thead className="!text-left font-normal border-b-[0.5px]">
+        <thead className="!text-left font-normal border-b-[0.5px] ">
           <tr>
-            <th className="py-4 font-medium text-sm md:text-base 2xl:text-lg">
+            <th className="py-4 font-medium text-sm md:text-base 2xl:text-lg pr-2">
               S/N
             </th>
-            <th className="py-4 font-medium text-sm md:text-base 2xl:text-lg">
+            <th className="py-4 font-medium text-sm md:text-base 2xl:text-lg pr-2">
               Name
             </th>
-            <th className="py-4 font-medium text-sm md:text-base 2xl:text-lg">
+            <th className="py-4 font-medium text-sm md:text-base 2xl:text-lg pr-2">
               Email Address
             </th>
             {type === "Driver" ? (
               <>
-                <th className="py-4 font-medium text-sm md:text-base 2xl:text-lg">
+                <th className="py-4 font-medium text-sm md:text-base 2xl:text-lg pr-2">
                   License Number
                 </th>
-                <th className="py-4 font-medium text-sm md:text-base 2xl:text-lg">
+                <th className="py-4 font-medium text-sm md:text-base 2xl:text-lg pr-2">
                   Verification Status
                 </th>
-                <th className="py-4 font-medium text-sm md:text-base 2xl:text-lg"></th>
+                <th className="py-4 font-medium text-sm md:text-base 2xl:text-lg pr-2"></th>
               </>
             ) : (
               <>
-                <th className="py-4 font-medium text-sm md:text-base 2xl:text-lg">
+                <th className="py-4 font-medium text-sm md:text-base 2xl:text-lg pr-2">
                   User Type
                 </th>
                 <th className="py-4 font-medium text-sm md:text-base 2xl:text-lg">
@@ -74,25 +74,25 @@ const UsersTable = ({
         <tbody>
           {data.map((user, id) => (
             <tr key={id}>
-              <td className="py-3 text-sm 2xl:text-base">{id + 1}</td>
-              <td className="py-3 text-sm 2xl:text-base">{user.name}</td>
-              <td className="py-3 text-sm 2xl:text-base">{user.email}</td>
+              <td className="py-3 text-sm 2xl:text-base text-nowrap pr-2">{id + 1}</td>
+              <td className="py-3 text-sm 2xl:text-base text-nowrap pr-2">{user.name}</td>
+              <td className="py-3 text-sm 2xl:text-base text-nowrap pr-2">{user.email}</td>
               {type === "Driver" ? (
                 <>
-                  <td className="py-3 text-sm 2xl:text-base">
+                  <td className="py-3 text-sm 2xl:text-base text-nowrap pr-2">
                     {user?.licenseNumber}
                   </td>
-                  <td className="py-3 text-sm 2xl:text-base">{user?.status}</td>
-                  <td className="py-3 text-sm 2xl:text-base text-right">
+                  <td className="py-3 text-sm 2xl:text-base text-nowrap pr-2">{user?.status}</td>
+                  <td className="py-3 text-sm 2xl:text-base text-right text-nowrap">
                     <DriverPopup />
                   </td>
                 </>
               ) : (
                 <>
-                  <td className="py-3 text-sm 2xl:text-base capitalize">
+                  <td className="py-3 text-sm 2xl:text-base capitalize text-nowrap pr-2">
                     {user?.userType}
                   </td>
-                  <td className="py-3 text-sm 2xl:text-base">
+                  <td className="py-3 text-sm 2xl:text-base text-nowrap">
                     {user?.lastAccess}
                   </td>
                 </>

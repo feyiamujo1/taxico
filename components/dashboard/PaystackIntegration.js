@@ -28,7 +28,7 @@ const PaystackIntegration = () => {
       onClick={() => {
         initializePayment(onSuccess, onClose);
       }}
-      className="w-fit h-fit text-nowrap flex items-center gap-1.5 text-custom-blue hover:text-grey-2 text-sm">
+      className="w-fit h-fit text-nowrap whitespace-nowrap flex items-center gap-1.5 text-custom-blue hover:text-grey-2 text-sm">
       <FiPlus />
       Fund Wallet
     </button>

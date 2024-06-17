@@ -1,9 +1,6 @@
 "use client";
 
-import { createClient } from "~/utils/supabase/client";
-
 import { useState } from "react";
-import { redirect, useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
 import { useForm } from "react-hook-form";
@@ -21,32 +18,63 @@ import {
   FormMessage
 } from "../ui/form";
 import { Input } from "../ui/input";
-import { revalidatePath } from "next/cache";
+import axios from "axios";
+import { useRouter } from "next/navigation";
 
 export default function SignupForm() {
   const [loading, setLoading] = useState(false);
-  const [serverError, setServerError] = useState("");
+  const [error, setError] = useState("");
+  const router = useRouter();
   const form = useForm<z.infer<typeof SignupFormSchema>>({
     resolver: zodResolver(SignupFormSchema)
   });
 
   const onSubmit = async (value: z.infer<typeof SignupFormSchema>) => {
-    const supabase = createClient();
     setLoading(true);
-    setServerError("");
+    setError("");
+    console.log();
 
-    const data = value;
-
-    const { error } = await supabase.auth.signUp(data);
-
-    if (error) {
-      setServerError(error.message);
+    try {
+      const response = await axios.post(
+        `https://${process.env.NEXT_PUBLIC_SUPABASE_REF}.supabase.co/auth/v1/signup?apikey=${process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY}`,
+        {
+          email: value.email,
+          password: value.password,
+          data: {
+            role: "commuter",
+            first_name: value.firstName,
+            last_name: value.lastName,
+            tag: value.tag,
+            driver_license_number: null,
+            vehicle_registration_number: null,
+            profile_picture: ""
+          }
+        },
+        {
+          headers: {
+            "Content-Type": "application/json"
+          }
+        }
+      );
+      if (response && response?.status === 200) {
+        console.log(response);
+        router.push("/login");
+      }
+    } catch (error: any) {
+      // setError("Something went wrong. Please try again later.");
+      console.log(error);
+      if (error?.response?.status === 404) {
+        setError("User not found!");
+      } else if (error?.response?.status === 401) {
+        setError("Invalid email or password!");
+      } else if (error?.response?.status === 422) {
+        setError(error.response.data.msg.replace(/,/g, ""));
+      } else {
+        setError("Something went wrong. Please try again later.");
+      }
       setLoading(false);
-    } else {
-      setServerError("");
+    } finally {
       setLoading(false);
-      revalidatePath("/", "layout");
-      redirect("/dashboard")
     }
   };
 
@@ -112,7 +140,7 @@ export default function SignupForm() {
               </FormLabel>
               <FormControl>
                 <Input
-                  className="focus:ring-1 focus:ring-white rounded-lg !bg-white border border-custom-ash focus:border-custom-blue px-2.5 h-12"
+                  className="lowercase focus:ring-1 focus:ring-white rounded-lg !bg-white border border-custom-ash focus:border-custom-blue px-2.5 h-12"
                   type="email"
                   placeholder="Your email"
                   {...field}
@@ -127,12 +155,10 @@ export default function SignupForm() {
           name="tag"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-form-black text-sm">
-                Tag
-              </FormLabel>
+              <FormLabel className="text-form-black text-sm">Tag</FormLabel>
               <FormControl>
                 <Input
-                  className="focus:ring-1 focus:ring-white rounded-lg !bg-white border border-custom-ash focus:border-custom-blue px-2.5 h-12"
+                  className="focus:ring-1 focus:ring-white rounded-lg !bg-white border border-custom-ash focus:border-custom-blue px-2.5 h-12 lowercase"
                   type="tag"
                   placeholder="Your Tag"
                   {...field}
@@ -162,8 +188,10 @@ export default function SignupForm() {
             </FormItem>
           )}
         />
-        {serverError && (
-          <div className="text-sm font-medium text-red-500">{serverError}</div>
+        {error !== "" && (
+          <div className="text-sm font-medium text-[#EF2929] pl-3.5">
+            {error}
+          </div>
         )}
         <div className="pt-4">
           <Button
@@ -174,10 +202,12 @@ export default function SignupForm() {
               form.getValues("lastName") === undefined ||
               form.getValues("email") === undefined ||
               form.getValues("password") === undefined ||
+              form.getValues("tag") === undefined ||
               form.getValues("firstName") === "" ||
               form.getValues("lastName") === "" ||
               form.getValues("email") === "" ||
-              form.getValues("password") === ""
+              form.getValues("password") === "" ||
+              form.getValues("tag") === ""
             }
             type="submit">
             {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}

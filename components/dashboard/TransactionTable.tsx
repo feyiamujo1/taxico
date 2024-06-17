@@ -18,7 +18,7 @@ const TransactionTable = ({
 }) => {
   const pathname = usePathname();
   return (
-    <div>
+    <div className="w-full overflow-x-scroll">
       <div className="flex justify-between items-center">
         {pathname === "/dashboard" && (
           <>
@@ -44,19 +44,19 @@ const TransactionTable = ({
         </colgroup>
         <thead className="!text-left font-normal border-b-[0.5px]">
           <tr>
-            <th className="py-4 font-medium text-sm md:text-base 2xl:text-lg">
+            <th className="py-4 font-medium text-sm md:text-base 2xl:text-lg pr-2">
               S/N
             </th>
-            <th className="py-4 font-medium text-sm md:text-base 2xl:text-lg">
+            <th className="py-4 font-medium text-sm md:text-base 2xl:text-lg pr-2">
               Date
             </th>
-            <th className="py-4 font-medium text-sm md:text-base 2xl:text-lg">
+            <th className="py-4 font-medium text-sm md:text-base 2xl:text-lg pr-2">
               Amount
             </th>
-            <th className="py-4 font-medium text-sm md:text-base 2xl:text-lg">
+            <th className="py-4 font-medium text-sm md:text-base 2xl:text-lg pr-2">
               Type
             </th>
-            <th className="py-4 font-medium text-sm md:text-base 2xl:text-lg">
+            <th className="py-4 font-medium text-sm md:text-base 2xl:text-lg pr-2">
               Description
             </th>
             <th className="py-4 font-medium text-sm md:text-base 2xl:text-lg">
@@ -67,20 +67,20 @@ const TransactionTable = ({
         <tbody>
           {data.map((transaction, id) => (
             <tr key={id}>
-              <td className="py-3 text-sm 2xl:text-base">
+              <td className="py-3 text-sm 2xl:text-base pr-2">
                 {transaction.id + 1}
               </td>
-              <td className="py-3 text-sm 2xl:text-base">{transaction.date}</td>
-              <td className="py-3 text-sm 2xl:text-base">
+              <td className="py-3 text-sm 2xl:text-base text-nowrap pr-2">{transaction.date}</td>
+              <td className="py-3 text-sm 2xl:text-base text-nowrap pr-2">
                 {transaction.amount}
               </td>
-              <td className="py-3 text-sm 2xl:text-base capitalize">
+              <td className="py-3 text-sm 2xl:text-base capitalize text-nowrap pr-2">
                 {transaction.type}
               </td>
-              <td className="py-3 text-sm 2xl:text-base">
+              <td className="py-3 text-sm 2xl:text-base text-nowrap pr-2">
                 {transaction.description}
               </td>
-              <td className={`py-3 text-sm 2xl:text-base text-center`}>
+              <td className={`py-3 text-sm 2xl:text-base text-center text-nowrap`}>
                 <p
                   className={` p-1 rounded-3xl text-white w-[100px] ${
                     transaction.status === "Completed"
