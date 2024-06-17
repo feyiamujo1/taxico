@@ -22,8 +22,8 @@ const SideBar = ({
     <nav
       className={`${
         showSideBar
-          ? "fixed h-screen w-[290px] top-0 bottom-0 left-0"
-          : "w-0 h-screen opacity-0 md:fixed md:w-[290px] md:h-screen md:opacity-100 md:top-0 md:bottom-0 md:left-0"
+          ? "fixed h-screen w-[290px]"
+          : "w-0 h-screen opacity-0 md:fixed md:w-[290px] md:h-screen md:opacity-100"
       } pt-5 md:pt-6 bg-grey  md:border-r transition-all `}>
       <div className="flex gap-2 w-[235px] mx-auto items-center ">
         <p

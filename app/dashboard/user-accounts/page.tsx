@@ -1,4 +1,4 @@
-import UsersTable from "~/components/dashboard/UsersTable"
+import UsersTable from "~/components/dashboard/UsersTable";
 
 const UserAccountsPage = () => {
   const userInfo = [
@@ -63,11 +63,7 @@ const UserAccountsPage = () => {
       lastAccess: "10/05/2024"
     }
   ];
-  return (
-    <>
-        <UsersTable type={"Users"} data={userInfo}  />
-    </>
-  )
-}
+  return <UsersTable type={"Users"} data={userInfo} />;
+};
 
-export default UserAccountsPage
+export default UserAccountsPage;

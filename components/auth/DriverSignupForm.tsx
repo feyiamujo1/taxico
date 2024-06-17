@@ -58,7 +58,7 @@ export default function DriverSignUp() {
             tag: value.tag,
             driver_license_number: value.licenseNumber,
             vehicle_registration_number: value.vehicleRegistrationNo,
-            profile_picture: ""
+            profile_picture: "",
           },
         },
         {
@@ -169,7 +169,7 @@ export default function DriverSignUp() {
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent className="bg-white">
-                  <SelectItem value="Driver's License">Driver's License</SelectItem>
+                  <SelectItem value="Driver's License">Driver&apos;s License</SelectItem>
                 </SelectContent>
               </Select>
               <FormMessage />
