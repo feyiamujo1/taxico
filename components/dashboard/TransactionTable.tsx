@@ -1,24 +1,13 @@
 "use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { HiOutlineArrowLeft } from "react-icons/hi2";
 import { PiArrowLeft, PiArrowRight } from "react-icons/pi";
+import { TransactionsType } from "~/lib/types/DashboardTypes";
 
-const TransactionTable = ({
-  data
-}: {
-  data: {
-    id: number;
-    date: string;
-    amount: string;
-    type: string;
-    description: string;
-    status: string;
-  }[];
-}) => {
+const TransactionTable = ({ data }: { data: TransactionsType[] | null }) => {
   const pathname = usePathname();
   return (
-    <div className="w-full overflow-x-scroll">
+    <div className="w-full">
       <div className="flex justify-between items-center">
         {pathname === "/dashboard" && (
           <>
@@ -33,71 +22,79 @@ const TransactionTable = ({
           </>
         )}
       </div>
-      <table className="w-full table-auto overflow-x-scroll">
-        <colgroup>
-          <col style={{ width: "5%" }} />
-          <col style={{ width: "25%" }} />
-          <col style={{ width: "15%" }} />
-          <col style={{ width: "15%" }} />
-          <col style={{ width: "25%" }} />
-          <col style={{ width: "15%" }} />
-        </colgroup>
-        <thead className="!text-left font-normal border-b-[0.5px]">
-          <tr>
-            <th className="py-4 font-medium text-sm md:text-base 2xl:text-lg pr-2">
-              S/N
-            </th>
-            <th className="py-4 font-medium text-sm md:text-base 2xl:text-lg pr-2">
-              Date
-            </th>
-            <th className="py-4 font-medium text-sm md:text-base 2xl:text-lg pr-2">
-              Amount
-            </th>
-            <th className="py-4 font-medium text-sm md:text-base 2xl:text-lg pr-2">
-              Type
-            </th>
-            <th className="py-4 font-medium text-sm md:text-base 2xl:text-lg pr-2">
-              Description
-            </th>
-            <th className="py-4 font-medium text-sm md:text-base 2xl:text-lg">
-              Status
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          {data.map((transaction, id) => (
-            <tr key={id}>
-              <td className="py-3 text-sm 2xl:text-base pr-2">
-                {transaction.id + 1}
-              </td>
-              <td className="py-3 text-sm 2xl:text-base text-nowrap pr-2">{transaction.date}</td>
-              <td className="py-3 text-sm 2xl:text-base text-nowrap pr-2">
-                {transaction.amount}
-              </td>
-              <td className="py-3 text-sm 2xl:text-base capitalize text-nowrap pr-2">
-                {transaction.type}
-              </td>
-              <td className="py-3 text-sm 2xl:text-base text-nowrap pr-2">
-                {transaction.description}
-              </td>
-              <td className={`py-3 text-sm 2xl:text-base text-center text-nowrap`}>
-                <p
-                  className={` p-1 rounded-3xl text-white w-[100px] ${
-                    transaction.status === "Completed"
-                      ? "bg-[#37AF35]"
-                      : "bg-[#EF2929]"
-                  }`}>
-                  {transaction.status}
-                </p>
-              </td>
+      <div className="w-full overflow-x-scroll">
+        <table className="w-full table-auto ">
+          <colgroup>
+            <col style={{ width: "5%" }} />
+            <col style={{ width: "25%" }} />
+            <col style={{ width: "15%" }} />
+            <col style={{ width: "15%" }} />
+            <col style={{ width: "25%" }} />
+            <col style={{ width: "15%" }} />
+          </colgroup>
+          <thead className="!text-left font-normal border-b-[0.5px]">
+            <tr>
+              <th className="py-4 font-medium text-sm md:text-base 2xl:text-lg pr-4 md:pr-2">
+                S/N
+              </th>
+              <th className="py-4 font-medium text-sm md:text-base 2xl:text-lg pr-4 md:pr-2">
+                Date
+              </th>
+              <th className="py-4 font-medium text-sm md:text-base 2xl:text-lg pr-4 md:pr-2">
+                Amount
+              </th>
+              <th className="py-4 font-medium text-sm md:text-base 2xl:text-lg pr-4 md:pr-2">
+                Type
+              </th>
+              <th className="py-4 font-medium text-sm md:text-base 2xl:text-lg pr-4 md:pr-2">
+                Description
+              </th>
+              <th className="py-4 font-medium text-sm md:text-base 2xl:text-lg">
+                Status
+              </th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {data?.map((transaction, id) => (
+              <tr key={id}>
+                <td className="py-3 text-sm 2xl:text-base pr-4 md:pr-2">
+                  {id + 1}
+                </td>
+                <td className="py-3 text-sm 2xl:text-base text-nowrap pr-4 md:pr-2">
+                  {transaction?.created_at}
+                </td>
+                <td className="py-3 text-sm 2xl:text-base text-nowrap pr-4 md:pr-2">
+                  {transaction?.amount}
+                </td>
+                <td className="py-3 text-sm 2xl:text-base capitalize text-nowrap pr-4 md:pr-2">
+                  {transaction?.type || "Wallet Topup"}
+                </td>
+                <td className="py-3 text-sm 2xl:text-base text-nowrap pr-4 md:pr-2">
+                  {transaction?.sender_first_name +
+                    " " +
+                    transaction?.sender_last_name || "Paystack"}
+                </td>
+                <td
+                  className={`py-3 text-sm 2xl:text-base text-center text-nowrap`}>
+                  <p
+                    className={` p-1 rounded-3xl text-white w-[100px] ${
+                      transaction?.status === "Completed" || !transaction.status
+                        ? "bg-[#37AF35]"
+                        : "bg-[#EF2929]"
+                    }`}>
+                    {"Completed"}
+                  </p>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
       {pathname !== "/dashboard" && (
         <div className="flex justify-between items-center mt-7 pb-7">
           <button className="flex gap-1 items-center text-sm md:text-base text-[#BFBFBF]">
-            <HiOutlineArrowLeft className="md:text-lg" />
+            <PiArrowLeft className="md:text-lg" />
             Previous
           </button>
           <div className="flex items-center gap-3">

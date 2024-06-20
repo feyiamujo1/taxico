@@ -1,87 +1,30 @@
+"use client";
+
 import TransactionTable from "~/components/dashboard/TransactionTable";
 import ShortInformationContainer from "~/components/dashboard/ShortInformationContainer";
 import PaystackIntegration from "~/components/dashboard/PaystackIntegration";
 import { HiOutlineChevronRight } from "react-icons/hi";
 import { GoArrowDownLeft, GoArrowUpRight } from "react-icons/go";
+import axios from "axios";
+import { useEffect, useState } from "react";
+import { getSavedState } from "~/lib/localStorage";
+import { Loader2 } from "lucide-react";
+import LoadingBox from "~/components/dashboard/LoadingBox";
+import ErrorBox from "~/components/dashboard/ErrorBox";
+import { TransactionsType, WalletsType } from "~/lib/types/DashboardTypes";
 
 const CommutersHomePage = () => {
-  const TransactionData = [
-    {
-      id: 0,
-      date: "22 May 2024, 20:05:54",
-      amount: "200",
-      type: "Funding",
-      description: "From Paystack",
-      status: "Completed"
-    },
-    {
-      id: 1,
-      date: "22 May 2024, 20:05:54",
-      amount: "200",
-      type: "Transfer",
-      description: "To Driver",
-      status: "Completed"
-    },
-    {
-      id: 2,
-      date: "22 May 2024, 20:05:54",
-      amount: "200",
-      type: "Funding",
-      description: "From Paystack",
-      status: "Completed"
-    },
-    {
-      id: 3,
-      date: "22 May 2024, 20:05:54",
-      amount: "200",
-      type: "Transfer",
-      description: "To Driver",
-      status: "Completed"
-    },
-    {
-      id: 4,
-      date: "22 May 2024, 20:05:54",
-      amount: "200",
-      type: "Transfer",
-      description: "To Driver",
-      status: "Completed"
-    },
-    {
-      id: 5,
-      date: "22 May 2024, 20:05:54",
-      amount: "200",
-      type: "Funding",
-      description: "From Paystack",
-      status: "Completed"
-    },
-    {
-      id: 6,
-      date: "22 May 2024, 20:05:54",
-      amount: "200",
-      type: "Funding",
-      description: "From Paystack",
-      status: "Completed"
-    },
-    {
-      id: 7,
-      date: "22 May 2024, 20:05:54",
-      amount: "200",
-      type: "Transfer",
-      description: "To Driver",
-      status: "Completed"
-    },
-    {
-      id: 8,
-      date: "22 May 2024, 20:05:54",
-      amount: "200",
-      type: "Funding",
-      description: "From Paystack",
-      status: "Completed"
-    }
-  ];
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const userInfo = getSavedState("taxicoUser");
+  const role = userInfo?.user_metadata?.role || "";
+  const [walletInfo, setWalletInfo] = useState<WalletsType[] | null>();
+  const [transactionTableInfo, setTransactionTableInfo] = useState<
+    TransactionsType[] | null
+  >();
+
   const currentDate = new Date();
   let currentMonth = currentDate.getMonth();
-  const role: any = "commuter";
   const monthNames = [
     "January",
     "February",
@@ -96,7 +39,51 @@ const CommutersHomePage = () => {
     "November",
     "December"
   ];
-  return (
+  const getdashboardInfo = async () => {
+    try {
+      const response: any = await axios.get(
+        `https://${process.env.NEXT_PUBLIC_SUPABASE_REF}.supabase.co/rest/v1/wallets?select=*&id=eq.${userInfo?.user_metadata?.sub}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            apikey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+          }
+        }
+      );
+      if (response && response?.status === 200) {
+        console.log("Wallet Info -", response?.data);
+        setWalletInfo(response?.data);
+        const responseTwo: any = await axios.get(
+          `https://${process.env.NEXT_PUBLIC_SUPABASE_REF}.supabase.co/rest/v1/transactions?select=*&id=eq.${userInfo?.user_metadata?.sub}`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              apikey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+            }
+          }
+        );
+        if (responseTwo && response?.status === 200) {
+          console.log("Table info -", responseTwo?.data);
+          setTransactionTableInfo(responseTwo?.data);
+        }
+      }
+    } catch (error: any) {
+      console.log(error);
+      setError("Something went wrong. Please try again later.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    getdashboardInfo();
+  }, []);
+
+  return loading ? (
+    <LoadingBox />
+  ) : !loading && error !== "" ? (
+    <ErrorBox />
+  ) : (
     <>
       {role === "admin" && (
         <p className="font-semibold text-lg mb-3">Financials</p>
@@ -106,15 +93,22 @@ const CommutersHomePage = () => {
           className={`w-full h-fit flex  justify-between ${
             role === "admin" ? "flex-col-reverse" : "flex-col"
           }`}>
-          <div className="flex justify-between gap-2 border-b-[0.5px] border-[#DFDFDF] py-2.5">
-            <div className="w-full ">
-              <p className="text-sm text-custom-black">
-                {role !== "commuter" ? "Balance" : "Total Inflow"}
-              </p>
-              <p className="font-semibold text-lg md:text-xl mt-1">NGN 4,500</p>
+          {role !== "admin" ? (
+            <div className="flex justify-between gap-2 border-b-[0.5px] border-[#DFDFDF] py-2.5">
+              <div className="w-full ">
+                <p className="text-sm text-custom-black">
+                  {role === "admin" ? "Total Inflow" : "Balance"}
+                </p>
+                <p className="font-semibold text-lg md:text-xl mt-1">
+                  NGN{" "}
+                  {walletInfo && walletInfo.length !== 0
+                    ? walletInfo[0]?.balance
+                    : "0"}
+                </p>
+              </div>
+              {role === "commuter" && <PaystackIntegration />}
             </div>
-            {role === "commuter" && <PaystackIntegration />}
-          </div>
+          ) : null}
           <div className="flex justify-between gap-6 pt-[1px]">
             <div className="w-1/2 py-2.5 border-b-[0.5px] border-[#DFDFDF]">
               <p className="text-sm text-custom-black flex gap-1">
@@ -127,7 +121,14 @@ const CommutersHomePage = () => {
                   </>
                 )}
               </p>
-              <p className="font-semibold text-lg md:text-xl mt-1">NGN 1,200</p>
+              <p className="font-semibold text-lg md:text-xl mt-1">
+                NGN{" "}
+                {role !== "admin" && walletInfo && walletInfo.length !== 0
+                  ? role === "commuter"
+                    ? walletInfo[0]?.outflow
+                    : walletInfo[0]?.inflow
+                  : "0"}
+              </p>
             </div>
             <div className="w-1/2 py-2.5 border-b-[0.5px] border-[#DFDFDF]">
               <p className="text-sm text-custom-black flex gap-1.5">
@@ -141,7 +142,12 @@ const CommutersHomePage = () => {
                 )}
               </p>
               <p className="font-semibold text-lg md:text-xl mt-1">
-                {role !== "commuter" && "NGN"} 6,000
+                {role !== "commuter" && "NGN"}{" "}
+                {role !== "admin" && walletInfo && walletInfo.length !== 0
+                  ? role === "commuter"
+                    ? walletInfo[0]?.outflow / 200
+                    : walletInfo[0]?.outflow
+                  : "0"}
               </p>
             </div>
           </div>
@@ -185,10 +191,10 @@ const CommutersHomePage = () => {
         </>
       )}
 
-      {!TransactionData ? (
-        <ShortInformationContainer type={"wallet"} />
+      {transactionTableInfo && transactionTableInfo?.length !== 0 ? (
+        <TransactionTable data={transactionTableInfo} />
       ) : (
-        <TransactionTable data={TransactionData} />
+        <ShortInformationContainer type={"transactions"} />
       )}
     </>
   );

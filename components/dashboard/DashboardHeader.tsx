@@ -1,4 +1,3 @@
-import axios from "axios";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Squash as Hamburger } from "hamburger-react";
@@ -10,48 +9,27 @@ const DashboardHeader = ({
   setShowSideBar
 }: {
   role: string;
-  showSideBar: boolean,
+  showSideBar: boolean;
   setShowSideBar: Dispatch<SetStateAction<boolean>>;
 }) => {
   const currentRoute = usePathname();
-
-  const getUserInfo = async () => {
-    // try {
-    //   const response = await axios.put(
-    //     `${baseUrl}/api/main/updateString?id=}`,
-    //     {
-    //       verified: true
-    //     },
-    //     {
-    //       headers: {
-    //         Authorization: `${token}`,
-    //         "Content-Type": "application/json"
-    //       }
-    //     }
-    //   );
-    //   if (response.status === 200) {
-    //   }
-    // } catch (error: any) {
-    //   setIsUploading(false);
-    //   console.log(error);
-    //   if (error.response.status === 401) {
-    //     // showErrorToast("Session Expired!");
-    //     signOut();
-    //     navigate("/login");
-    //   } else {
-    //     // showErrorToast("Error, Try again later");
-    //   }
-    // }
-    
-  };
   return (
     <div className="w-full">
       <div className="w-11/12 mx-auto py-4 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="font-medium flex justify-center items-center bg-custom-blue text-white">
-            <Hamburger size={20} toggled={showSideBar} toggle={setShowSideBar} duration={0.3} />
+          <div
+            onClick={() => setShowSideBar(true)}
+            className="font-medium h-[42px] w-[42px] flex justify-center items-center bg-custom-blue text-white">
+            <span className={`${showSideBar && "invisible md:visible"}`}>
+              <Hamburger
+                size={20}
+                toggled={showSideBar}
+                toggle={setShowSideBar}
+                duration={0.3}
+              />
+            </span>
           </div>
-          <h2 className=" text-lg font-semibold py-3">
+          <h2 className=" text-lg font-semibold ">
             {currentRoute === "/dashboard"
               ? "Home"
               : currentRoute.includes("/transaction")

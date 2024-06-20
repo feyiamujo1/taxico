@@ -18,9 +18,9 @@ export default function GeneralDashboardLayout({
 
   return (
     <div
-      className={`w-full box-border relative ${
-        pathname.includes("pay-driver") && "h-screen bg-[#F6F7FF]"
-      }`}>
+      className={`w-full box-border ${
+        showSideBar && "h-screen overflow-hidden"
+      } ${pathname.includes("pay-driver") && "h-screen bg-[#F6F7FF]"}`}>
       {!pathname.includes("pay-driver") && (
         <SideBar showSideBar={showSideBar} setShowSideBar={setShowSideBar} />
       )}
@@ -38,7 +38,7 @@ export default function GeneralDashboardLayout({
             <DashboardHeaderDescription role={role} />
           </>
         )}
-        <div className="w-full">
+        <div className={`w-full`}>
           <div className="w-11/12 mx-auto py-5 md:py-7 box-border">
             {children}
           </div>

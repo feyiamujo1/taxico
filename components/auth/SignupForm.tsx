@@ -19,11 +19,14 @@ import {
 } from "../ui/form";
 import { Input } from "../ui/input";
 import axios from "axios";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 export default function SignupForm() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const currentRoute = usePathname();
+  // const defaultUserInfo = useState
+
   const router = useRouter();
   const form = useForm<z.infer<typeof SignupFormSchema>>({
     resolver: zodResolver(SignupFormSchema)
@@ -36,7 +39,7 @@ export default function SignupForm() {
 
     try {
       const response = await axios.post(
-        `https://${process.env.NEXT_PUBLIC_SUPABASE_REF}.supabase.co/auth/v1/signup?apikey=${process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY}`,
+        `https://${process.env.NEXT_PUBLIC_SUPABASE_REF}.supabase.co/auth/v1/signup`,
         {
           email: value.email,
           password: value.password,
@@ -52,7 +55,8 @@ export default function SignupForm() {
         },
         {
           headers: {
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
+            apikey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
           }
         }
       );
@@ -211,7 +215,9 @@ export default function SignupForm() {
             }
             type="submit">
             {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            Create account
+            {currentRoute.includes("/account")
+              ? "Save Changes"
+              : "Create account"}
           </Button>
         </div>
       </form>

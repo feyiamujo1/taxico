@@ -36,14 +36,15 @@ export default function LoginForm() {
 
     try {
       const response: any = await axios.post(
-        `https://${process.env.NEXT_PUBLIC_SUPABASE_REF}.supabase.co/auth/v1/token?apikey=${process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY}&grant_type=password`,
+        `https://${process.env.NEXT_PUBLIC_SUPABASE_REF}.supabase.co/auth/v1/token?grant_type=password`,
         {
           email: value.email,
           password: value.password
         },
         {
           headers: {
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
+            apikey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
           }
         }
       );
@@ -55,7 +56,7 @@ export default function LoginForm() {
           expires_in: response?.data?.expires_in,
           refresh_token: response?.data?.refresh_token,
           user_metadata: response?.data?.user?.user_metadata
-        }
+        };
         console.log("The data is: ", data);
         saveLocalState("taxicoUser", data);
         router.push("/dashboard");

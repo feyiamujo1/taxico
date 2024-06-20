@@ -63,7 +63,11 @@ const UserAccountsPage = () => {
       lastAccess: "10/05/2024"
     }
   ];
-  return <UsersTable type={"Users"} data={userInfo} />;
+  return (
+    <div>
+      <UsersTable type={"Users"} data={userInfo} />;
+    </div>
+  );
 };
 
 export default UserAccountsPage;

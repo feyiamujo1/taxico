@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
 import { useForm } from "react-hook-form";
@@ -34,6 +34,7 @@ import axios from "axios";
 
 export default function DriverSignUp() {
   const [loading, setLoading] = useState(false);
+  const currentRoute = usePathname();
   const [fileItem, setFileItem] = useState<string | ArrayBuffer | null>(null);
   const [error, setError] = useState("");
   const router = useRouter();
@@ -47,7 +48,7 @@ export default function DriverSignUp() {
 
     try {
       const response = await axios.post(
-        `https://${process.env.NEXT_PUBLIC_SUPABASE_REF}.supabase.co/auth/v1/signup?apikey=${process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY}`,
+        `https://${process.env.NEXT_PUBLIC_SUPABASE_REF}.supabase.co/auth/v1/signup`,
         {
           email: value.email,
           password: value.password,
@@ -63,7 +64,8 @@ export default function DriverSignUp() {
         },
         {
           headers: {
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
+            apikey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
           }
         }
       );
@@ -299,7 +301,10 @@ export default function DriverSignUp() {
             }
             type="submit">
             {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            Create account
+            
+            {currentRoute.includes("/account")
+              ? "Save Changes"
+              : "Create account"}
           </Button>
         </div>
       </form>
