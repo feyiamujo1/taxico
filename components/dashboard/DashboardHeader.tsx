@@ -15,11 +15,11 @@ const DashboardHeader = ({
   const currentRoute = usePathname();
   return (
     <div className="w-full">
-      <div className="w-11/12 mx-auto py-4 flex items-center justify-between">
+      <div className="w-11/12 mx-auto py-4 md:py-6 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <div
             onClick={() => setShowSideBar(true)}
-            className="font-medium h-[42px] w-[42px] flex justify-center items-center bg-custom-blue text-white">
+            className="font-medium h-[42px] w-[42px] flex justify-center items-center bg-custom-blue text-white md:hidden">
             <span className={`${showSideBar && "invisible md:visible"}`}>
               <Hamburger
                 size={20}

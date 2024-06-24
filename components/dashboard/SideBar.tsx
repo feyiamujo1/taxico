@@ -78,22 +78,21 @@ const SideBar = ({
           <HiHome className="text-[22px]" />
           <p className=" text-sm font-medium">Home</p>
         </Link>
-        {userInfo?.role === "driver" ||
-          (userInfo?.role === "commuter" && (
-            <Link
-              onClick={() => {
-                showSideBar && setShowSideBar(false);
-              }}
-              href="/dashboard/transactions"
-              className={`w-full flex items-center gap-3 transition-all duration-300 hover:text-black ${
-                pathname.includes("/dashboard/transactions")
-                  ? "text-custom-blue"
-                  : "text-link-ash"
-              }`}>
-              <GrStorage className="text-[22px]" />
-              <p className=" text-sm font-medium">Transactions</p>
-            </Link>
-          ))}
+        {userInfo?.role === "driver" || userInfo?.role === "commuter" ? (
+          <Link
+            onClick={() => {
+              showSideBar && setShowSideBar(false);
+            }}
+            href="/dashboard/transactions"
+            className={`w-full flex items-center gap-3 transition-all duration-300 hover:text-black ${
+              pathname.includes("/dashboard/transactions")
+                ? "text-custom-blue"
+                : "text-link-ash"
+            }`}>
+            <GrStorage className="text-[22px]" />
+            <p className=" text-sm font-medium">Transactions</p>
+          </Link>
+        ) : null}
         {userInfo?.role === "admin" && (
           <>
             <Link

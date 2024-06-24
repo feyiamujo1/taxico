@@ -1,15 +1,29 @@
 import Image from "next/image";
-import { useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { HiOutlineDocumentArrowUp } from "react-icons/hi2";
 
 const DragFileUpload = ({
-  fileItem,
-  setFileItem
+  setFileItem,
+  error,
+  setError
 }: {
-  fileItem: string | ArrayBuffer | null;
   setFileItem: Function;
+  error: string;
+  setError: Function;
 }) => {
+  const [displayImage, setDisplayImage] = useState<string | ArrayBuffer | null>(
+    null
+  );
+
+  const textRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (error === "User profile picture missing" && textRef.current) {
+      textRef.current.focus();
+    }
+  }, [error]);
+
   const { fileRejections, acceptedFiles, getRootProps, getInputProps } =
     useDropzone({
       maxFiles: 1,
@@ -20,14 +34,21 @@ const DragFileUpload = ({
 
   useEffect(() => {
     if (acceptedFiles.length === 1) {
+      if (error === "User profile picture missing") {
+        setError("");
+      }
+
       const file = acceptedFiles[0];
-      const reader = new FileReader();
+      setFileItem(file);
 
-      reader.onload = () => {
-        setFileItem(reader.result);
+      // Read the file as a data URL for image preview
+      const readerForDataUrl = new FileReader();
+      readerForDataUrl.onload = () => {
+        if (readerForDataUrl.result) {
+          setDisplayImage(readerForDataUrl.result as string);
+        }
       };
-
-      reader.readAsDataURL(file);
+      readerForDataUrl.readAsDataURL(file);
     }
   }, [acceptedFiles, setFileItem]);
 
@@ -44,7 +65,7 @@ const DragFileUpload = ({
 
   return (
     <div>
-      <p className="text-form-black font-medium text-sm mb-2">
+      <p ref={textRef} className="text-form-black font-medium text-sm mb-2">
         Profile Picture
       </p>
       <div
@@ -52,12 +73,12 @@ const DragFileUpload = ({
         className="border border-dashed flex items-center gap-5 px-3 py-3 rounded-lg h-12 cursor-pointer focus:border-custom-blue">
         <input {...getInputProps()} />
 
-        {!fileItem ? (
+        {!displayImage ? (
           <HiOutlineDocumentArrowUp className="text-xl" />
         ) : (
           <Image
             // @ts-ignore
-            src={fileItem}
+            src={displayImage}
             alt="profile"
             width={20}
             height={20}
@@ -69,7 +90,13 @@ const DragFileUpload = ({
           <span className="text-custom-blue">browse</span>{" "}
         </p>
       </div>
-      <>{fileRejectionItems}</>
+      <>
+        {error === "User profile picture missing" ? (
+          <p className="text-sm text-[#EF2929] pl-3.5 mb-0.5 mt-2">{error}</p>
+        ) : (
+          fileRejectionItems
+        )}
+      </>
     </div>
   );
 };

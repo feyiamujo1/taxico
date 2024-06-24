@@ -5,12 +5,11 @@ import { usePathname, useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
 import { useForm } from "react-hook-form";
+import { createClient } from "~/utils/supabase/client";
 import {
   Select,
   SelectContent,
-  SelectGroup,
   SelectItem,
-  SelectLabel,
   SelectTrigger,
   SelectValue
 } from "~/components/ui/select";
@@ -35,7 +34,8 @@ import axios from "axios";
 export default function DriverSignUp() {
   const [loading, setLoading] = useState(false);
   const currentRoute = usePathname();
-  const [fileItem, setFileItem] = useState<string | ArrayBuffer | null>(null);
+  const supabase = createClient();
+  const [fileItem, setFileItem] = useState<ArrayBuffer | File | null>(null);
   const [error, setError] = useState("");
   const router = useRouter();
   const form = useForm<z.infer<typeof DriverSignupFormSchema>>({
@@ -47,46 +47,51 @@ export default function DriverSignUp() {
     setError("");
 
     try {
-      const response = await axios.post(
-        `https://${process.env.NEXT_PUBLIC_SUPABASE_REF}.supabase.co/auth/v1/signup`,
-        {
-          email: value.email,
-          password: value.password,
-          data: {
-            role: "driver",
-            first_name: value.firstName,
-            last_name: value.lastName,
-            tag: value.tag,
-            driver_license_number: value.licenseNumber,
-            vehicle_registration_number: value.vehicleRegistrationNo,
-            profile_picture: "",
-          },
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-            apikey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-          }
-        }
-      );
-
-      if (response && response?.status === 200) {
-        console.log(response.data);
-        // User has been created then
-        // Add user to table
-        const responseTwo = await axios.post(
-          `https://${process.env.NEXT_PUBLIC_SUPABASE_REF}.supabase.co/rest/v1/users?apikey=${process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY}`,
-          
-          {
-            headers: {
-              "Content-Type": "application/json"
+      if (fileItem) {
+        console.log(fileItem);
+        // Send the image to bucket
+        const { data: profilePictureUrl, error: serverError } =
+          await supabase.storage
+            .from("images")
+            .upload(`${form.getValues("tag")}.png`, fileItem);
+        // Then do the signup proper
+        if (profilePictureUrl) {
+          console.log(profilePictureUrl);
+          const image_url = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/images/${profilePictureUrl?.path}`;
+          console.log(image_url);
+          const response = await axios.post(
+            `https://${process.env.NEXT_PUBLIC_SUPABASE_REF}.supabase.co/auth/v1/signup`,
+            {
+              email: value.email,
+              password: value.password,
+              data: {
+                role: "driver",
+                first_name: value.firstName,
+                last_name: value.lastName,
+                tag: value.tag,
+                driver_license_number: value.licenseNumber,
+                vehicle_registration_number: value.vehicleRegistrationNo,
+                profile_picture: image_url
+              }
+            },
+            {
+              headers: {
+                "Content-Type": "application/json",
+                apikey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+              }
             }
+          );
+
+          if (response && response?.status === 200) {
+            console.log(response);
+            router.push("/login");
           }
-        );
-        if (responseTwo?.status === 201) {
-          console.log(responseTwo);
-          router.push("/login");
+        } else {
+          throw new Error(serverError.message);
         }
+      } else {
+        setError("User profile picture missing");
+        setLoading(false);
       }
     } catch (error: any) {
       // setError("Something went wrong. Please try again later.");
@@ -111,7 +116,11 @@ export default function DriverSignUp() {
         onSubmit={form.handleSubmit(onSubmit)}
         method="post"
         className="space-y-3">
-        <DragFileUpload fileItem={fileItem} setFileItem={setFileItem} />
+        <DragFileUpload
+          setFileItem={setFileItem}
+          error={error}
+          setError={setError}
+        />
         <div className="flex flex-col md:flex-row justify-between gap-3">
           <div className="md:w-1/2">
             <FormField
@@ -171,7 +180,9 @@ export default function DriverSignUp() {
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent className="bg-white">
-                  <SelectItem value="Driver's License">Driver&apos;s License</SelectItem>
+                  <SelectItem value="Driver's License">
+                    Driver&apos;s License
+                  </SelectItem>
                 </SelectContent>
               </Select>
               <FormMessage />
@@ -276,32 +287,32 @@ export default function DriverSignUp() {
             </FormItem>
           )}
         />
-        {error && (
-          <div className="text-sm font-medium text-red-500 ">{error}</div>
+        {error && error !== "User profile picture missing" && (
+          <div className="text-sm text-[#EF2929] pl-3.5">{error}</div>
         )}
         <div className="pt-4">
           <Button
             className={`w-full font-medium rounded-3xl disabled:text-black text-white px-2.5 py-6 text-sm bg-custom-blue disabled:bg-[#F3F3F3] transition-all duration-300`}
-            disabled={
-              loading ||
-              form.getValues("firstName") === undefined ||
-              form.getValues("lastName") === undefined ||
-              form.getValues("email") === undefined ||
-              form.getValues("password") === undefined ||
-              form.getValues("governmentId") === undefined ||
-              form.getValues("licenseNumber") === undefined ||
-              form.getValues("vehicleRegistrationNo") === undefined ||
-              form.getValues("firstName") === "" ||
-              form.getValues("lastName") === "" ||
-              form.getValues("email") === "" ||
-              form.getValues("password") === "" ||
-              form.getValues("governmentId") === "" ||
-              form.getValues("licenseNumber") === "" ||
-              form.getValues("vehicleRegistrationNo") === ""
-            }
+            // disabled={
+            // loading ||
+            // form.getValues("firstName") === undefined ||
+            // form.getValues("lastName") === undefined ||
+            // form.getValues("email") === undefined ||
+            // form.getValues("password") === undefined ||
+            // form.getValues("governmentId") === undefined ||
+            // form.getValues("licenseNumber") === undefined ||
+            // form.getValues("vehicleRegistrationNo") === undefined ||
+            // form.getValues("firstName") === "" ||
+            // form.getValues("lastName") === "" ||
+            // form.getValues("email") === "" ||
+            // form.getValues("password") === "" ||
+            // form.getValues("governmentId") === "" ||
+            // form.getValues("licenseNumber") === "" ||
+            // form.getValues("vehicleRegistrationNo") === ""
+            // }
             type="submit">
             {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            
+
             {currentRoute.includes("/account")
               ? "Save Changes"
               : "Create account"}

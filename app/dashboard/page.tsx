@@ -41,20 +41,9 @@ const CommutersHomePage = () => {
   ];
   const getdashboardInfo = async () => {
     try {
-      const response: any = await axios.get(
-        `https://${process.env.NEXT_PUBLIC_SUPABASE_REF}.supabase.co/rest/v1/wallets?select=*&id=eq.${userInfo?.user_metadata?.sub}`,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            apikey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-          }
-        }
-      );
-      if (response && response?.status === 200) {
-        console.log("Wallet Info -", response?.data);
-        setWalletInfo(response?.data);
-        const responseTwo: any = await axios.get(
-          `https://${process.env.NEXT_PUBLIC_SUPABASE_REF}.supabase.co/rest/v1/transactions?select=*&id=eq.${userInfo?.user_metadata?.sub}`,
+      if (role !== "admin") {
+        const response: any = await axios.get(
+          `https://${process.env.NEXT_PUBLIC_SUPABASE_REF}.supabase.co/rest/v1/wallets?select=*&id=eq.${userInfo?.user_metadata?.sub}`,
           {
             headers: {
               "Content-Type": "application/json",
@@ -62,9 +51,49 @@ const CommutersHomePage = () => {
             }
           }
         );
-        if (responseTwo && response?.status === 200) {
-          console.log("Table info -", responseTwo?.data);
-          setTransactionTableInfo(responseTwo?.data);
+        if (response && response?.status === 200) {
+          console.log("Wallet Info -", response?.data);
+          setWalletInfo(response?.data);
+          const responseTwo: any = await axios.get(
+            `https://${process.env.NEXT_PUBLIC_SUPABASE_REF}.supabase.co/rest/v1/transactions?select=*&id=eq.${userInfo?.user_metadata?.sub}`,
+            {
+              headers: {
+                "Content-Type": "application/json",
+                apikey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+              }
+            }
+          );
+          if (responseTwo && response?.status === 200) {
+            console.log("Table info -", responseTwo?.data);
+            setTransactionTableInfo(responseTwo?.data);
+          }
+        }
+      } else {
+        const response: any = await axios.get(
+          `https://${process.env.NEXT_PUBLIC_SUPABASE_REF}.supabase.co/rest/v1/users?select=*&role=eq.commuter`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              apikey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+            }
+          }
+        );
+        if (response && response?.status === 200) {
+          console.log("Wallet Info -", response?.data);
+          setWalletInfo(response?.data);
+          const responseTwo: any = await axios.get(
+            `https://${process.env.NEXT_PUBLIC_SUPABASE_REF}.supabase.co/rest/v1/users?select=*&role=eq.driver`,
+            {
+              headers: {
+                "Content-Type": "application/json",
+                apikey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+              }
+            }
+          );
+          if (responseTwo && response?.status === 200) {
+            console.log("Table info -", responseTwo?.data);
+            setTransactionTableInfo(responseTwo?.data);
+          }
         }
       }
     } catch (error: any) {
