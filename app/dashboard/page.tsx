@@ -3,7 +3,7 @@
 import TransactionTable from "~/components/dashboard/TransactionTable";
 import ShortInformationContainer from "~/components/dashboard/ShortInformationContainer";
 import PaystackIntegration from "~/components/dashboard/PaystackIntegration";
-import { HiOutlineChevronRight } from "react-icons/hi";
+
 import { GoArrowDownLeft, GoArrowUpRight } from "react-icons/go";
 import axios from "axios";
 import { useEffect, useState } from "react";
@@ -12,6 +12,7 @@ import { Loader2 } from "lucide-react";
 import LoadingBox from "~/components/dashboard/LoadingBox";
 import ErrorBox from "~/components/dashboard/ErrorBox";
 import { TransactionsType, WalletsType } from "~/lib/types/DashboardTypes";
+import AddDriverAccountDetail from "~/components/dashboard/AddDriverAccountDetail";
 
 const CommutersHomePage = () => {
   const [loading, setLoading] = useState(true);
@@ -30,6 +31,9 @@ const CommutersHomePage = () => {
     total_inflow: number;
     total_outflow: number;
   }>();
+
+  const [driversWithdrawalAccount, setDriversWithdrawalAccount] =
+    useState<any[]>();
 
   const currentDate = new Date();
   let currentMonth = currentDate.getMonth();
@@ -59,6 +63,7 @@ const CommutersHomePage = () => {
             }
           }
         );
+
         if (response && response?.status === 200) {
           console.log("Wallet Info -", response?.data);
           setWalletInfo(response?.data);
@@ -74,6 +79,22 @@ const CommutersHomePage = () => {
           if (responseTwo && responseTwo?.status === 200) {
             console.log("Table info -", responseTwo?.data);
             setTransactionTableInfo(responseTwo?.data);
+
+            if (role === "driver") {
+              const responseThree: any = await axios.get(
+                `https://${process.env.NEXT_PUBLIC_SUPABASE_REF}.supabase.co/rest/v1/bank_account_details?select=*&user=eq.${userInfo?.user_metadata?.sub}`,
+                {
+                  headers: {
+                    "Content-Type": "application/json",
+                    apikey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+                  }
+                }
+              );
+              if (responseThree && responseThree?.status === 200) {
+                console.log("Account details info -", responseThree?.data);
+                setDriversWithdrawalAccount(responseTwo?.data);
+              }
+            }
           }
         }
       } else {
@@ -150,7 +171,7 @@ const CommutersHomePage = () => {
       {role === "admin" && (
         <p className="font-semibold text-lg mb-3">Financials</p>
       )}
-      <div className="w-full box-border flex gap-3 md:gap-6 md:flex-row">
+      <div className="w-full box-border flex flex-col gap-3 md:gap-6 md:flex-row ">
         <div
           className={`w-full h-fit flex  justify-between ${
             role === "admin" ? "flex-col-reverse" : "flex-col"
@@ -234,15 +255,23 @@ const CommutersHomePage = () => {
                 <p className="">Withdrawal Account</p>
                 <p className="text-[#BFBFBF] text-sm">WITHDRAW NOW</p>
               </div>
-              <p className="font-semibold text-lg md:text-xl my-1">
-                0348131283
-              </p>
-              <p className="text-xs text-custom-black">GTBANK</p>
+              <div>
+                {!driversWithdrawalAccount ||
+                driversWithdrawalAccount?.length === 0 ? (
+                  <p className="text-[#BFBFBF] py-3">Unavailable</p>
+                ) : (
+                  <>
+                    <p className="font-semibold text-lg md:text-xl my-1">
+                      {driversWithdrawalAccount[0]?.account_number}
+                    </p>
+                    <p className="text-xs text-custom-black truncate">
+                      {driversWithdrawalAccount[0]?.bank}
+                    </p>
+                  </>
+                )}
+              </div>
             </div>
-            <button className="w-full flex justify-between items-center py-4 border-b-[0.5px] border-[#DFDFDF]">
-              <p className="text-sm text-custom-black">Add new account</p>
-              <HiOutlineChevronRight />
-            </button>
+            <AddDriverAccountDetail setIsUpdatingWallet={setIsUpdatingWallet} />
           </div>
         )}
       </div>

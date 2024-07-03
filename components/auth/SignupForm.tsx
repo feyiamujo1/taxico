@@ -214,10 +214,13 @@ export default function SignupForm() {
               form.getValues("tag") === ""
             }
             type="submit">
-            {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            {currentRoute.includes("/account")
-              ? "Save Changes"
-              : "Create account"}
+            {loading ? (
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            ) : currentRoute.includes("/account") ? (
+              "Save Changes"
+            ) : (
+              "Create account"
+            )}
           </Button>
         </div>
       </form>

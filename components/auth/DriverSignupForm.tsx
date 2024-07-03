@@ -311,11 +311,13 @@ export default function DriverSignUp() {
             // form.getValues("vehicleRegistrationNo") === ""
             // }
             type="submit">
-            {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-
-            {currentRoute.includes("/account")
-              ? "Save Changes"
-              : "Create account"}
+            {loading ? (
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            ) : currentRoute.includes("/account") ? (
+              "Save Changes"
+            ) : (
+              "Create account"
+            )}
           </Button>
         </div>
       </form>

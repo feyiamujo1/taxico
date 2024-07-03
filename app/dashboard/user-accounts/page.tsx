@@ -12,7 +12,7 @@ const UserAccountsPage = () => {
   const [commutersInfo, setCommutersInfo] = useState<usersInfoType[]>([]);
   const [error, setError] = useState("");
 
-  const getCommutersInfo = async () => {
+  const getUsersInfo = async () => {
     setIsLoading(true);
     setError("");
     try {
@@ -38,7 +38,7 @@ const UserAccountsPage = () => {
   };
 
   useEffect(() => {
-    getCommutersInfo();
+    getUsersInfo();
   }, []);
 
   return isLoading ? (
