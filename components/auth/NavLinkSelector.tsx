@@ -9,7 +9,7 @@ const NavLinkSelector = () => {
   return (
     <nav className="absolute top-0 right-0 left-0 w-11/12 2xl:w-[1400px] mx-auto py-2.5 md:py-5 flex justify-between items-center">
       <Link href={"/"}>
-        <Image src={"/icon.png"} height={26} width={106} alt="logo" />
+        <Image src={"/logo.png"} height={26} width={106} alt="logo" />
       </Link>
       <div className="flex items-center gap-3 font-medium">
         {currentRoute === "/login" ? (
