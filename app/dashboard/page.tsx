@@ -18,10 +18,18 @@ const CommutersHomePage = () => {
   const [error, setError] = useState("");
   const userInfo = getSavedState("taxicoUser");
   const role = userInfo?.user_metadata?.role || "";
+  const [isUpdatingWallet, setIsUpdatingWallet] = useState(false);
   const [walletInfo, setWalletInfo] = useState<WalletsType[] | null>();
   const [transactionTableInfo, setTransactionTableInfo] = useState<
     TransactionsType[] | null
   >();
+
+  const [commutersNumber, setCommutersNumber] = useState(0);
+  const [driversNumber, setDriversNumber] = useState(0);
+  const [fundAnalytics, setFundAnalytics] = useState<{
+    total_inflow: number;
+    total_outflow: number;
+  }>();
 
   const currentDate = new Date();
   let currentMonth = currentDate.getMonth();
@@ -63,14 +71,14 @@ const CommutersHomePage = () => {
               }
             }
           );
-          if (responseTwo && response?.status === 200) {
+          if (responseTwo && responseTwo?.status === 200) {
             console.log("Table info -", responseTwo?.data);
             setTransactionTableInfo(responseTwo?.data);
           }
         }
       } else {
         const response: any = await axios.get(
-          `https://${process.env.NEXT_PUBLIC_SUPABASE_REF}.supabase.co/rest/v1/users?select=*&role=eq.commuter`,
+          `https://${process.env.NEXT_PUBLIC_SUPABASE_REF}.supabase.co/rest/v1/rpc/count_users_by_role`,
           {
             headers: {
               "Content-Type": "application/json",
@@ -79,10 +87,12 @@ const CommutersHomePage = () => {
           }
         );
         if (response && response?.status === 200) {
-          console.log("Wallet Info -", response?.data);
-          setWalletInfo(response?.data);
+          console.log("RPC Info -", response?.data);
+          // setWalletInfo(response?.data);
+          setCommutersNumber(response?.data[0]["count"]);
+          setDriversNumber(response?.data?.[2]["count"]);
           const responseTwo: any = await axios.get(
-            `https://${process.env.NEXT_PUBLIC_SUPABASE_REF}.supabase.co/rest/v1/users?select=*&role=eq.driver`,
+            `https://${process.env.NEXT_PUBLIC_SUPABASE_REF}.supabase.co/rest/v1/rpc/sum_inflows_outflows`,
             {
               headers: {
                 "Content-Type": "application/json",
@@ -90,9 +100,24 @@ const CommutersHomePage = () => {
               }
             }
           );
-          if (responseTwo && response?.status === 200) {
-            console.log("Table info -", responseTwo?.data);
-            setTransactionTableInfo(responseTwo?.data);
+          if (responseTwo && responseTwo?.status === 200) {
+            console.log("Inflow/Outflow info -", responseTwo?.data);
+            setFundAnalytics(responseTwo?.data[0]);
+            // setDriversNumber(responseTwo?.data?.length);
+
+            const responseThree: any = await axios.get(
+              `https://${process.env.NEXT_PUBLIC_SUPABASE_REF}.supabase.co/rest/v1/transaction_details?select=*`,
+              {
+                headers: {
+                  "Content-Type": "application/json",
+                  apikey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+                }
+              }
+            );
+            if (responseThree && responseThree?.status === 200) {
+              console.log("Transactions table info -", responseThree?.data);
+              setTransactionTableInfo(responseThree?.data);
+            }
           }
         }
       }
@@ -107,6 +132,14 @@ const CommutersHomePage = () => {
   useEffect(() => {
     getdashboardInfo();
   }, []);
+
+  useEffect(() => {
+    if (isUpdatingWallet === true) {
+      console.log("Fetching new wallet info");
+      getdashboardInfo();
+      setIsUpdatingWallet(false);
+    }
+  }, [isUpdatingWallet]);
 
   return loading ? (
     <LoadingBox />
@@ -132,10 +165,19 @@ const CommutersHomePage = () => {
                   NGN{" "}
                   {walletInfo && walletInfo.length !== 0
                     ? walletInfo[0]?.balance
-                    : "0"}
+                    : 0}
                 </p>
               </div>
-              {role === "commuter" && <PaystackIntegration />}
+              {role === "commuter" && (
+                <PaystackIntegration
+                  setIsUpdatingWallet={setIsUpdatingWallet}
+                  currentWalletBalance={
+                    walletInfo && walletInfo.length !== 0
+                      ? walletInfo[0]?.balance
+                      : 0
+                  }
+                />
+              )}
             </div>
           ) : null}
           <div className="flex justify-between gap-6 pt-[1px]">
@@ -146,7 +188,7 @@ const CommutersHomePage = () => {
                 ) : (
                   <>
                     <GoArrowDownLeft className="text-[19px] text-[#37AF35]" />{" "}
-                    Inflow
+                    Total Inflow
                   </>
                 )}
               </p>
@@ -156,7 +198,9 @@ const CommutersHomePage = () => {
                   ? role === "commuter"
                     ? walletInfo[0]?.outflow
                     : walletInfo[0]?.inflow
-                  : "0"}
+                  : fundAnalytics
+                  ? fundAnalytics?.total_inflow
+                  : 0}
               </p>
             </div>
             <div className="w-1/2 py-2.5 border-b-[0.5px] border-[#DFDFDF]">
@@ -166,7 +210,7 @@ const CommutersHomePage = () => {
                 ) : (
                   <>
                     <GoArrowUpRight className="text-[19px] text-[#EF2929]" />{" "}
-                    Outflow
+                    Total Outflow
                   </>
                 )}
               </p>
@@ -176,7 +220,9 @@ const CommutersHomePage = () => {
                   ? role === "commuter"
                     ? walletInfo[0]?.outflow / 200
                     : walletInfo[0]?.outflow
-                  : "0"}
+                  : fundAnalytics
+                  ? fundAnalytics?.total_outflow
+                  : 0}
               </p>
             </div>
           </div>
@@ -208,13 +254,17 @@ const CommutersHomePage = () => {
               <p className="text-sm text-custom-black flex gap-1.5">
                 Commuters Count
               </p>
-              <p className="font-semibold text-lg md:text-xl mt-1">264</p>
+              <p className="font-semibold text-lg md:text-xl mt-1">
+                {commutersNumber}
+              </p>
             </div>
             <div className="w-1/2 py-2.5 border-b-[0.5px] border-[#DFDFDF]">
               <p className="text-sm text-custom-black flex gap-1.5">
                 Drivers Count
               </p>
-              <p className="font-semibold text-lg md:text-xl mt-1">38</p>
+              <p className="font-semibold text-lg md:text-xl mt-1">
+                {driversNumber}
+              </p>
             </div>
           </div>
         </>

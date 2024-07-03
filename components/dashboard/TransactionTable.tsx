@@ -2,10 +2,14 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { PiArrowLeft, PiArrowRight } from "react-icons/pi";
+import { getSavedState } from "~/lib/localStorage";
 import { TransactionsType } from "~/lib/types/DashboardTypes";
+import { format } from "date-fns";
 
 const TransactionTable = ({ data }: { data: TransactionsType[] | null }) => {
   const pathname = usePathname();
+  const userInfo = getSavedState("taxicoUser");
+  const role = userInfo?.user_metadata?.role || "";
   return (
     <div className="w-full">
       <div className="flex justify-between items-center">
@@ -61,18 +65,42 @@ const TransactionTable = ({ data }: { data: TransactionsType[] | null }) => {
                   {id + 1}
                 </td>
                 <td className="py-3 text-sm 2xl:text-base text-nowrap pr-4 md:pr-2">
-                  {transaction?.created_at}
+                  {format(
+                    new Date(transaction?.created_at),
+                    "do MMMM yyyy, HH:mm a"
+                  )}
+                  {/* {transaction?.created_at} */}
                 </td>
                 <td className="py-3 text-sm 2xl:text-base text-nowrap pr-4 md:pr-2">
                   {transaction?.amount}
                 </td>
                 <td className="py-3 text-sm 2xl:text-base capitalize text-nowrap pr-4 md:pr-2">
-                  {transaction?.type || "Wallet Topup"}
+                  {role === "admin" && transaction?.type === "wallet"
+                    ? "Transfer"
+                    : role === "commuter" && transaction?.type === "wallet"
+                    ? "Outgoing Transfer"
+                    : role === "driver" && transaction?.type === "wallet"
+                    ? "Incoming Transfer"
+                    : "Wallet Topup"}
                 </td>
                 <td className="py-3 text-sm 2xl:text-base text-nowrap pr-4 md:pr-2">
-                  {transaction?.sender_first_name +
-                    " " +
-                    transaction?.sender_last_name || "Paystack"}
+                  {role === "admin"
+                    ? transaction?.sender_first_name +
+                      " " +
+                      transaction?.sender_last_name +
+                      " to " +
+                      transaction?.receiver_first_name +
+                      " " +
+                      transaction?.receiver_last_name
+                    : role === "driver"
+                    ? transaction?.sender_first_name +
+                        " " +
+                        transaction?.sender_last_name || "Paystack"
+                    : role === "driver"
+                    ? transaction?.receiver_first_name +
+                        " " +
+                        transaction?.receiver_first_name || "Paystack"
+                    : "Paystack"}
                 </td>
                 <td
                   className={`py-3 text-sm 2xl:text-base text-center text-nowrap`}>

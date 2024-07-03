@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import axios from "axios";
 import { useEffect, useState } from "react";
@@ -10,102 +10,45 @@ import { getSavedState } from "~/lib/localStorage";
 import { TransactionsType } from "~/lib/types/DashboardTypes";
 
 const TransactionsPage = () => {
-  const TransactionData = [
-    {
-      id: 0,
-      created_at: "22 May 2024, 20:05:54",
-      amount: "200",
-      type: "Funding",
-      description: "From Paystack",
-      status: "Completed"
-    },
-    {
-      id: 1,
-      created_at: "22 May 2024, 20:05:54",
-      amount: "200",
-      type: "Transfer",
-      description: "To Driver",
-      status: "Completed"
-    },
-    {
-      id: 2,
-      created_at: "22 May 2024, 20:05:54",
-      amount: "200",
-      type: "Funding",
-      description: "From Paystack",
-      status: "Completed"
-    },
-    {
-      id: 3,
-      created_at: "22 May 2024, 20:05:54",
-      amount: "200",
-      type: "Transfer",
-      description: "To Driver",
-      status: "Completed"
-    },
-    {
-      id: 4,
-      created_at: "22 May 2024, 20:05:54",
-      amount: "200",
-      type: "Transfer",
-      description: "To Driver",
-      status: "Completed"
-    },
-    {
-      id: 5,
-      created_at: "22 May 2024, 20:05:54",
-      amount: "200",
-      type: "Funding",
-      description: "From Paystack",
-      status: "Completed"
-    },
-    {
-      id: 6,
-      created_at: "22 May 2024, 20:05:54",
-      amount: "200",
-      type: "Funding",
-      description: "From Paystack",
-      status: "Completed"
-    },
-    {
-      id: 7,
-      created_at: "22 May 2024, 20:05:54",
-      amount: "200",
-      type: "Transfer",
-      description: "To Driver",
-      status: "Completed"
-    },
-    {
-      id: 8,
-      created_at: "22 May 2024, 20:05:54",
-      amount: "200",
-      type: "Funding",
-      description: "From Paystack",
-      status: "Completed"
-    }
-  ];
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const userInfo = getSavedState("taxicoUser");
+  const role = userInfo?.user_metadata?.role || "";
   const [transactionTableInfo, setTransactionTableInfo] = useState<
     TransactionsType[] | null
   >();
 
   const getdashboardInfo = async () => {
     try {
-      const response: any = await axios.get(
-        `https://${process.env.NEXT_PUBLIC_SUPABASE_REF}.supabase.co/rest/v1/transactions?select=*&id=eq.${userInfo?.user_metadata?.sub}`,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            apikey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+      if (role !== "admin") {
+        const response: any = await axios.get(
+          `https://${process.env.NEXT_PUBLIC_SUPABASE_REF}.supabase.co/rest/v1/transactions?select=*&id=eq.${userInfo?.user_metadata?.sub}`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              apikey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+            }
           }
-        }
-      );
+        );
 
-      if (response && response?.status === 200) {
-        console.log("Transaction Info -", response?.data);
-        setTransactionTableInfo(response?.data);
+        if (response && response?.status === 200) {
+          console.log("Transaction Info -", response?.data);
+          setTransactionTableInfo(response?.data);
+        }
+      } else {
+        const response: any = await axios.get(
+          `https://${process.env.NEXT_PUBLIC_SUPABASE_REF}.supabase.co/rest/v1/transaction_details?select=*`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              apikey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+            }
+          }
+        );
+        if (response && response?.status === 200) {
+          console.log("Transactions table info -", response?.data);
+          setTransactionTableInfo(response?.data);
+        }
       }
     } catch (error: any) {
       console.log(error);
@@ -118,7 +61,7 @@ const TransactionsPage = () => {
   useEffect(() => {
     getdashboardInfo();
   }, []);
-  return (loading ? (
+  return loading ? (
     <LoadingBox />
   ) : !loading && error !== "" ? (
     <ErrorBox />
@@ -129,7 +72,7 @@ const TransactionsPage = () => {
       ) : (
         <ShortInformationContainer type={"transactions"} />
       )}
-    </>)
+    </>
   );
 };
 

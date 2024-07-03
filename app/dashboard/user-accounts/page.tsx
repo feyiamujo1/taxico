@@ -1,73 +1,55 @@
+"use client";
+import axios from "axios";
+import { useEffect, useState } from "react";
+import ErrorBox from "~/components/dashboard/ErrorBox";
+import LoadingBox from "~/components/dashboard/LoadingBox";
+import { errorToast } from "~/components/dashboard/ToastsProvider";
 import UsersTable from "~/components/dashboard/UsersTable";
+import { usersInfoType } from "~/lib/types/DashboardTypes";
 
 const UserAccountsPage = () => {
-  const userInfo = [
-    {
-      name: "Chioma Okafor",
-      email: "chiomaokafor@gmail.com",
-      userType: "driver",
-      lastAccess: "05/05/2024"
-    },
-    {
-      name: "Adebayo Adekunle",
-      email: "adebayoadekunle@gmail.com",
-      userType: "commuter",
-      lastAccess: "12/05/2024"
-    },
-    {
-      name: "Folake Adebisi",
-      email: "folakeadebisi@gmail.com",
-      userType: "commuter",
-      lastAccess: "19/05/2024"
-    },
-    {
-      name: "Ifeanyi Nwankwo",
-      email: "ifeanyinwankwo@gmail.com",
-      userType: "driver",
-      lastAccess: "23/05/2024"
-    },
-    {
-      name: "Ngozi Chukwu",
-      email: "ngozichukwu@gmail.com",
-      userType: "commuter",
-      lastAccess: "15/05/2024"
-    },
-    {
-      name: "Yemi Alade",
-      email: "yemialade@gmail.com",
-      userType: "driver",
-      lastAccess: "08/05/2024"
-    },
-    {
-      name: "Chinedu Uche",
-      email: "chineduuche@gmail.com",
-      userType: "commuter",
-      lastAccess: "26/05/2024"
-    },
-    {
-      name: "Aisha Bello",
-      email: "aishabello@gmail.com",
-      userType: "driver",
-      lastAccess: "21/05/2024"
-    },
-    {
-      name: "Samuel Oluwaseun",
-      email: "samueloluwaseun@gmail.com",
-      userType: "commuter",
-      lastAccess: "14/05/2024"
-    },
-    {
-      name: "Bola Tinubu",
-      email: "bolatinubu@gmail.com",
-      userType: "driver",
-      lastAccess: "10/05/2024"
+  const [isLoading, setIsLoading] = useState(true);
+  const [commutersInfo, setCommutersInfo] = useState<usersInfoType[]>([]);
+  const [error, setError] = useState("");
+
+  const getCommutersInfo = async () => {
+    setIsLoading(true);
+    setError("");
+    try {
+      const response: any = await axios.get(
+        `https://${process.env.NEXT_PUBLIC_SUPABASE_REF}.supabase.co/rest/v1/users?select=*`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            apikey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+          }
+        }
+      );
+      if (response && response?.status === 200) {
+        console.log("Commuters Info -", response?.data);
+        setCommutersInfo(response?.data);
+      }
+    } catch (error: any) {
+      console.log(error);
+      setError("Something went wrong. Please try again later.");
+    } finally {
+      setIsLoading(false);
     }
-  ];
-  return (
-    <div>
-      <UsersTable type={"Users"} data={userInfo} />;
-    </div>
-  );
+  };
+
+  useEffect(() => {
+    getCommutersInfo();
+  }, []);
+
+  return isLoading ? (
+    <LoadingBox />
+  ) : !isLoading && error !== "" ? (
+    <ErrorBox />
+  ) : (
+    <>
+      <UsersTable type={"Users"} data={commutersInfo} />
+    </>
+  )
 };
 
 export default UserAccountsPage;

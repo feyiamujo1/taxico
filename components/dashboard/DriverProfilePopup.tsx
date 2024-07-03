@@ -1,8 +1,46 @@
-import * as Dialog from "@radix-ui/react-dialog";
-import Image from "next/image";
-import { HiOutlineX } from "react-icons/hi";
+"use client";
 
-const DriverProfilePopup = () => {
+import * as Dialog from "@radix-ui/react-dialog";
+import axios from "axios";
+import { format } from "date-fns";
+import Image from "next/image";
+import { useEffect, useState } from "react";
+import { HiOutlineX } from "react-icons/hi";
+import { usersInfoType } from "~/lib/types/DashboardTypes";
+const defaultUserProfileImage = "/default-user.png";
+
+const DriverProfilePopup = ({ driverInfo }: { driverInfo: usersInfoType }) => {
+  const [walletBalance, setWalletBalance] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
+  const getWalletInfo = async () => {
+    setIsLoading(true);
+    try {
+      const response: any = await axios.get(
+        `https://${process.env.NEXT_PUBLIC_SUPABASE_REF}.supabase.co/rest/v1/wallets?select=*&id=eq.${driverInfo.id}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            apikey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+          }
+        }
+      );
+      if (response && response?.status === 200) {
+        console.log("wallet info -", response);
+        setWalletBalance(response?.data?.length);
+      }
+    } catch (error: any) {
+      console.log(error);
+      // setError("Something went wrong. Please try again later.");
+      setWalletBalance(-1);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    getWalletInfo();
+  }, []);
+
   return (
     <Dialog.Root>
       <Dialog.Trigger asChild>
@@ -14,7 +52,7 @@ const DriverProfilePopup = () => {
         <Dialog.Overlay className="DialogOverlay bg-[rgba(0,0,0,0.3)] backdrop-blur-sm " />
         <Dialog.Content className="DialogContent h-[85vh] md:h-[750px] 2xl:h-[800px]">
           <div className="flex justify-center items-center">
-            <div className="bg-white px-3 py-4 md:px-6 md:py-8 space-y-4 md:space-y-6">
+            <div className="bg-white px-3 py-4 md:px-6 md:py-8 space-y-4 md:space-y-6 w-full">
               <Dialog.Close asChild>
                 <button
                   className="text-2xl hover:text-red-500 duration-300 "
@@ -24,22 +62,31 @@ const DriverProfilePopup = () => {
               </Dialog.Close>
               <div className="">
                 <Image
-                  src={"/images/ajibs.png"}
+                  src={
+                    `https://${process.env.NEXT_PUBLIC_SUPABASE_REF}.supabase.co/storage/v1/object/public/images/${driverInfo.tag}.png` ||
+                    defaultUserProfileImage
+                  }
+                  overrideSrc={defaultUserProfileImage}
                   alt="driver"
                   width={376}
                   height={376}
                   className="w-full h-fit rounded-md overflow-hidden object-cover object-center"
                 />
               </div>
-              <h2 className="text-lg md:text-xl ">Ajibade Samuel</h2>
+              <h2 className="text-lg md:text-xl ">
+                {" "}
+                {driverInfo?.first_name + " " + driverInfo?.last_name}
+              </h2>
               <div className=" space-y-3.5">
                 <p className="text-sm flex justify-between items-center ">
                   <span className="text-[#444444]">Email</span>
-                  <span className="font-medium">Saka@gmail.com</span>
+                  <span className="font-medium">{driverInfo.email}</span>
                 </p>
                 <p className="text-sm flex justify-between items-center ">
                   <span className="text-[#444444]">License Number</span>
-                  <span className="font-medium">HJD232HJDN</span>
+                  <span className="font-medium">
+                    {driverInfo.driver_license_number}
+                  </span>
                 </p>
                 <p className="text-sm flex justify-between items-center ">
                   <span className="text-[#444444]">ID Type</span>
@@ -47,19 +94,32 @@ const DriverProfilePopup = () => {
                 </p>
                 <p className="text-sm flex justify-between items-center ">
                   <span className="text-[#444444]">Registration Number</span>
-                  <span className="font-medium">KSF-242-ZS</span>
+                  <span className="font-medium">
+                    {driverInfo?.vehicle_registration_number}
+                  </span>
                 </p>
-                <p className="text-sm flex justify-between items-center ">
+                {/* <p className="text-sm flex justify-between items-center ">
                   <span className="text-[#444444]">Car Make</span>
                   <span className="font-medium">Toyota Corolla</span>
-                </p>
+                </p> */}
                 <p className="text-sm flex justify-between items-center ">
                   <span className="text-[#444444]">Date Registered</span>
-                  <span className="font-medium">24/05/2024</span>
+                  <span className="font-medium">
+                    {format(
+                      new Date(driverInfo?.created_at),
+                      "do MMMM yyyy, HH:mm a"
+                    )}
+                  </span>
                 </p>
                 <p className="text-sm flex justify-between items-center ">
                   <span className="text-[#444444]">Trips Completed</span>
-                  <span className="font-medium">230</span>
+                  {!isLoading ? (
+                    <span className="font-medium">{walletBalance}</span>
+                  ) : (
+                    <span className="bg-[#b7b7b7] text-[#b7b7b7] animate-pulse ">
+                      230
+                    </span>
+                  )}
                 </p>
               </div>
               <div className="w-full flex flex-col items-center">

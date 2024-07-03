@@ -24,3 +24,17 @@ export type TransactionsType = {
   type: string;
   status: string;
 };
+
+export type usersInfoType = {
+  created_at: string;
+  driver_license_number: string;
+  email: string;
+  first_name: string;
+  id: string;
+  last_name:string;
+  profile_picture: string;
+  role: string;
+  tag: string;
+  updated_at: string;
+  vehicle_registration_number: string;
+};

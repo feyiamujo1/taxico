@@ -1,27 +1,44 @@
+"use client";
+
 import { PiArrowLeft, PiArrowRight } from "react-icons/pi";
 import DriverPopup from "./DriverProfilePopup";
+import { usersInfoType } from "~/lib/types/DashboardTypes";
+import { format } from "date-fns";
+import DriverAccountFilter from "./DriverAccountFilter";
+import UserAccountFilter from "./UserAccountFilter";
+import { useState } from "react";
 
 const UsersTable = ({
   type,
   data
 }: {
   type: string;
-  data: {
-    name: string;
-    email: string;
-    userType?: string;
-    lastAccess?: string;
-    licenseNumber?: string;
-    status?: string;
-  }[];
+  data: usersInfoType[];
 }) => {
+  const [filterValue, setFilterValue] = useState("all");
+
+  const filteredData = data.filter(user => {
+    if (user.role === "admin") return false;
+    if (filterValue === "all") return true;
+    return user.role === filterValue.slice(0, -1); // Assuming 'filterValue' ends with 's' like 'drivers'
+  });
+
   return (
     <div>
       <div className="flex justify-between items-center">
         <p className="text-sm 2xl:text-base font-medium"></p>
-        <button className=" rounded px-2.5 py-1.5 text-sm 2xl:text-base font-medium border">
-          Filter
-        </button>
+        {type === "driver" ? (
+          <></>
+        ) : (
+          // <DriverAccountFilter
+          //   filterValue={filterValue}
+          //   setFilterValue={setFilterValue}
+          // />
+          <UserAccountFilter
+            filterValue={filterValue}
+            setFilterValue={setFilterValue}
+          />
+        )}
       </div>
       <div className="w-full overflow-x-scroll">
         <table className="w-full table-auto">
@@ -69,13 +86,13 @@ const UsersTable = ({
             </tr>
           </thead>
           <tbody>
-            {data.map((user, id) => (
+            {filteredData?.map((user, id) => (
               <tr key={id}>
                 <td className="py-3 text-sm 2xl:text-base text-nowrap pr-4 md:pr-2">
                   {id + 1}
                 </td>
                 <td className="py-3 text-sm 2xl:text-base text-nowrap pr-4 md:pr-2">
-                  {user.name}
+                  {user?.first_name + " " + user?.last_name}
                 </td>
                 <td className="py-3 text-sm 2xl:text-base text-nowrap pr-4 md:pr-2">
                   {user.email}
@@ -83,22 +100,25 @@ const UsersTable = ({
                 {type === "Driver" ? (
                   <>
                     <td className="py-3 text-sm 2xl:text-base text-nowrap pr-4 md:pr-2">
-                      {user?.licenseNumber}
+                      {user?.driver_license_number}
                     </td>
                     <td className="py-3 text-sm 2xl:text-base text-nowrap pr-4 md:pr-2">
-                      {user?.status}
+                      {"Verified"}
                     </td>
                     <td className="py-3 text-sm 2xl:text-base text-right text-nowrap">
-                      <DriverPopup />
+                      <DriverPopup driverInfo={user} />
                     </td>
                   </>
                 ) : (
                   <>
                     <td className="py-3 text-sm 2xl:text-base capitalize text-nowrap pr-4 md:pr-2">
-                      {user?.userType}
+                      {user?.role}
                     </td>
                     <td className="py-3 text-sm 2xl:text-base text-nowrap">
-                      {user?.lastAccess}
+                      {format(
+                        new Date(user?.created_at),
+                        "do MMMM yyyy, HH:mm a"
+                      )}
                     </td>
                   </>
                 )}

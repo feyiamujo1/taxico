@@ -50,7 +50,7 @@ const DragFileUpload = ({
       };
       readerForDataUrl.readAsDataURL(file);
     }
-  }, [acceptedFiles, setFileItem]);
+  }, [acceptedFiles, setFileItem, error, setError]);
 
   const fileRejectionItems = fileRejections.map(({ file, errors }: any, id) => {
     return (
