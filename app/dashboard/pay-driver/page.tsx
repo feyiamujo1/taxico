@@ -7,7 +7,6 @@ import { useEffect, useState } from "react";
 import { HiMiniArrowLongLeft } from "react-icons/hi2";
 import { errorToast, successToast } from "~/components/dashboard/ToastsProvider";
 import { getSavedState } from "~/lib/localStorage";
-import "react-toastify/dist/ReactToastify.css";
 
 interface DriverInfoType {
   created_at: string;
@@ -49,8 +48,6 @@ const PayDriverPage = () => {
       console.log(response);
       if (response && response?.status === 200) {
         console.log("driver data is ", response);
-        console.log("successful");
-        successToast("Payment successuful!");
         setDriversInfo(response.data[0]);
         setLoading(false);
       }
@@ -64,7 +61,7 @@ const PayDriverPage = () => {
 
   const payDriver = async () => {
     setLoading(true);
-    console.log(userInfo?.user_metadata?.sub);
+    console.log(userInfo);
     console.log(driversInfo?.id)
     console.log((ticketNumber * 200).toFixed(1))
 
@@ -79,7 +76,7 @@ const PayDriverPage = () => {
         {
           headers: {
             "Content-Type": "application/json",
-            apikey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+            apikey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
           }
         }
       );
@@ -119,7 +116,7 @@ const PayDriverPage = () => {
     <div className=" px-3 py-4 md:px-6 md:py-8 space-y-4 md:space-y-6">
       <Link href={"/dashboard"} className="flex gap-3 md:gap-4 items-center">
         <HiMiniArrowLongLeft className="text-2xl md:text-3xl" />
-        <Image src={"/icon.png"} height={26} width={106} alt="logo" />
+        <Image src={"/logo.png"} height={26} width={106} alt="logo" />
       </Link>
       <div className="pt-[90px]">
         <h2 className="text-[#2B2B2B] font-medium text-xl md:text-[28px] text-center">

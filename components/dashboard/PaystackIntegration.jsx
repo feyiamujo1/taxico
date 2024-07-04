@@ -5,10 +5,9 @@ import * as AlertDialog from "@radix-ui/react-alert-dialog";
 import * as Dialog from "@radix-ui/react-dialog";
 import { HiOutlineX } from "react-icons/hi";
 import React, { useState } from "react";
-import { toast } from "react-toastify";
 import axios from "axios";
 import { errorToast, successToast } from "./ToastsProvider";
-
+import { CheckCircle, LoaderCircle } from "lucide-react";
 
 const PaystackIntegration = ({ setIsUpdatingWallet, currentWalletBalance }) => {
   console.log("My current wallet history: ", currentWalletBalance);
@@ -17,11 +16,10 @@ const PaystackIntegration = ({ setIsUpdatingWallet, currentWalletBalance }) => {
   const [inComingFund, setIncomingFund] = useState();
   const [isLoading, setIsLoading] = useState("");
 
-
   const updateWalletInfo = async () => {
     setIsLoading("updating");
     setOpen(true);
-    console.log(userInfo?.user_metadata?.sub)
+    console.log(userInfo?.user_metadata?.sub);
 
     console.log(
       "Funded to be updated",
@@ -30,8 +28,11 @@ const PaystackIntegration = ({ setIsUpdatingWallet, currentWalletBalance }) => {
 
     try {
       const response = await axios.patch(
-        `https://${process.env.NEXT_PUBLIC_SUPABASE_REF}.supabase.co/rest/v1/wallets?user_id=eq.${userInfo?.user_metadata?.sub}`,
+        `https://${process.env.NEXT_PUBLIC_SUPABASE_REF}.supabase.co/rest/v1/wallets?id=eq.${userInfo?.user_metadata?.sub}`,
         {
+          inflow: parseFloat(currentWalletBalance + inComingFund || 0).toFixed(
+            1
+          ),
           balance: parseFloat(currentWalletBalance + inComingFund || 0).toFixed(
             1
           )
@@ -46,7 +47,7 @@ const PaystackIntegration = ({ setIsUpdatingWallet, currentWalletBalance }) => {
       console.log(response);
       if (response && response?.status === 204) {
         console.log("Wallet topped up -", response);
-        successToast("Account funded successfully!")
+        successToast("Account funded successfully!");
         setIsUpdatingWallet(true);
         console.log("successful");
         setIncomingFund();
@@ -113,15 +114,15 @@ const PaystackIntegration = ({ setIsUpdatingWallet, currentWalletBalance }) => {
   //   // initializePayment(onSuccess, onClose);
   // };
 
-  return (
+  return isLoading === "" ? (
     <Dialog.Root open={open} onOpenChange={setOpen} defaultOpen={open}>
-      <Dialog.Trigger
-        asChild
-        className="w-fit h-fit text-nowrap whitespace-nowrap flex items-center gap-1.5 text-custom-blue hover:text-grey-2 text-sm cursor-pointer">
-        <span>
+      <Dialog.Trigger asChild>
+        <button
+          onClick={() => setOpen(true)}
+          className="w-fit h-fit text-nowrap whitespace-nowrap flex items-center gap-1.5 text-custom-blue hover:text-grey-2 text-sm cursor-pointer">
           <FiPlus />
           Fund Wallet
-        </span>
+        </button>
       </Dialog.Trigger>
       <Dialog.Portal>
         <Dialog.Overlay className="fixed inset-0 bg-[rgba(0,0,0,0.3)] backdrop-blur-sm !pointer-events-none" />
@@ -162,8 +163,11 @@ const PaystackIntegration = ({ setIsUpdatingWallet, currentWalletBalance }) => {
                           className="w-full py-3 px-6 rounded-3xl text-sm 2xl:text-base bg-custom-blue text-white "
                           onClick={event => {
                             event.preventDefault();
-                            setOpen(false);
-                            if (inComingFund <= 100) {
+
+                            console.log("hello");
+                            if (inComingFund >= 100) {
+                              console.log("wondering");
+                              setOpen(false);
                               initializePayment(handleSuccess, handleClose);
                             }
                           }}>
@@ -174,7 +178,10 @@ const PaystackIntegration = ({ setIsUpdatingWallet, currentWalletBalance }) => {
                   ) : (
                     <button
                       type="submit"
-                      onClick={e=> e.preventDefault()}
+                      onClick={e => {
+                        e.preventDefault();
+                        console.log("its me");
+                      }}
                       className="w-full py-3 px-6 rounded-3xl text-sm 2xl:text-base bg-custom-blue text-white ">
                       Continue
                     </button>
@@ -189,56 +196,57 @@ const PaystackIntegration = ({ setIsUpdatingWallet, currentWalletBalance }) => {
         </Dialog.Content>
       </Dialog.Portal>
     </Dialog.Root>
-    //   <AlertDialog.Root open={open} onOpenChange={setOpen}>
-    //     <AlertDialog.Trigger
-    //       asChild
-    //       className="w-fit h-fit text-nowrap whitespace-nowrap flex items-center gap-1.5 text-custom-blue hover:text-grey-2 text-sm cursor-pointer">
-    //       <span>
-    //         <FiPlus />
-    //         Fund Wallet
-    //       </span>
-    //     </AlertDialog.Trigger>
-    //     <AlertDialog.Portal className="">
-    //       <AlertDialog.Overlay className="DialogOverlayTwo !bg-[rgba(0,0,0,0.6)] !backdrop-blur-sm " />
-    //       <AlertDialog.Content className="AlertDialogContent">
-    //         <AlertDialog.Title className="AlertDialogTitle"></AlertDialog.Title>
-    //         <AlertDialog.Description className="AlertDialogDescription text-sm md:text-base text-custom-black mt-1.5 mb-16  flex flex-col justify-center gap-2 items-center h-full">
-    //           {isLoading === "updating" ? (
-    //             <>
-    //               <LoaderCircle className=" animate-spin text-custom-blue text-2xl" />
-    //               <p className="text-custom-blue ">
-    //                 {" "}
-    //                 Funding wallet please wait...
-    //               </p>
-    //             </>
-    //           ) : (
-    //             <>
-    //               <CheckCircle className="text-custom-blue text-2xl" />
-    //               <p className="text-custom-blue ">
-    //                 {" "}
-    //                 Wallet funded successfully! Redirecting...
-    //               </p>
-    //             </>
-    //           )}
-    //         </AlertDialog.Description>
-    //         <div style={{ display: "flex", flexDirection: "column-reverse" }}>
-    //           {isLoading !== "loading" && (
-    //             <AlertDialog.Cancel asChild>
-    //               <button
-    //                 className=""
-    //                 onClick={() => {
-    //                   setOpen(false);
-    //                   setIsLoading("");
-    //                   setIncomingFund();
-    //                 }}>
-    //                 Cancel
-    //               </button>
-    //             </AlertDialog.Cancel>
-    //           )}
-    //         </div>
-    //       </AlertDialog.Content>
-    //     </AlertDialog.Portal>
-    //   </AlertDialog.Root>
+  ) : (
+    <AlertDialog.Root open={open} onOpenChange={setOpen}>
+      <AlertDialog.Trigger
+        asChild
+        className="w-fit h-fit text-nowrap whitespace-nowrap flex items-center gap-1.5 text-custom-blue hover:text-grey-2 text-sm cursor-pointer">
+        <span>
+          <FiPlus />
+          Fund Wallet
+        </span>
+      </AlertDialog.Trigger>
+      <AlertDialog.Portal className="">
+        <AlertDialog.Overlay className="DialogOverlayTwo !bg-[rgba(0,0,0,0.6)] !backdrop-blur-sm " />
+        <AlertDialog.Content className="AlertDialogContent">
+          <AlertDialog.Title className="AlertDialogTitle"></AlertDialog.Title>
+          <AlertDialog.Description className="AlertDialogDescription text-sm md:text-base text-custom-black mt-1.5 mb-16  flex flex-col justify-center gap-2 items-center h-full">
+            {isLoading === "updating" ? (
+              <>
+                <LoaderCircle className=" animate-spin text-custom-blue text-2xl" />
+                <p className="text-custom-blue ">
+                  {" "}
+                  Funding wallet please wait...
+                </p>
+              </>
+            ) : (
+              <>
+                <CheckCircle className="text-custom-blue text-2xl" />
+                <p className="text-custom-blue ">
+                  {" "}
+                  Wallet funded successfully! Redirecting...
+                </p>
+              </>
+            )}
+          </AlertDialog.Description>
+          <div style={{ display: "flex", flexDirection: "column-reverse" }}>
+            {isLoading !== "loading" && (
+              <AlertDialog.Cancel asChild>
+                <button
+                  className=""
+                  onClick={() => {
+                    setOpen(false);
+                    setIsLoading("");
+                    setIncomingFund();
+                  }}>
+                  Cancel
+                </button>
+              </AlertDialog.Cancel>
+            )}
+          </div>
+        </AlertDialog.Content>
+      </AlertDialog.Portal>
+    </AlertDialog.Root>
   );
 };
 

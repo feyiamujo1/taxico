@@ -1,5 +1,4 @@
 import { toast } from "react-toastify";
-import 'react-toastify/dist/ReactToastify.css';
 
 // Custom styling for error toasts
 const successToastStyle = {
@@ -14,7 +13,8 @@ const successProgressStyle = {
 // Custom styling for error toasts
 const errorToastStyle = {
   backgroundColor: "#EF4444", // Red background
-  color: "white"
+  color: "#ffffff",
+  fill: "#ffffff"
 };
 
 const errorProgressStyle = {

@@ -119,6 +119,10 @@
   fill: white;
 }
 
+.Toastify__toast-icon .Toastify--animate-icon .Toastify__zoom-enter svg{
+  fill: white !important;
+}
+
 /* reset */
 
 .MenubarTrigger {

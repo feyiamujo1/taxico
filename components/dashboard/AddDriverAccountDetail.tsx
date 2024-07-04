@@ -4,7 +4,6 @@ import { HiOutlineChevronRight } from "react-icons/hi2";
 import axios from "axios";
 
 import { Loader2 } from "lucide-react";
-import Image from "next/image";
 import { Button } from "../ui/button";
 import { getSavedState } from "~/lib/localStorage";
 import { errorToast, successToast } from "./ToastsProvider";
