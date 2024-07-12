@@ -92,7 +92,7 @@ const CommutersHomePage = () => {
               );
               if (responseThree && responseThree?.status === 200) {
                 console.log("Account details info -", responseThree);
-                setDriversWithdrawalAccount(responseTwo?.data[0]);
+                setDriversWithdrawalAccount(responseThree?.data[0]);
               }
             }
           }
@@ -256,19 +256,16 @@ const CommutersHomePage = () => {
                 <p className="text-[#BFBFBF] text-sm">WITHDRAW NOW</p>
               </div>
               <div>
-                {!driversWithdrawalAccount ||
-                driversWithdrawalAccount?.length === 0 ? (
-                  <p className="text-[#BFBFBF] py-3">Unavailable</p>
-                ) : (
                   <>
                     <p className="font-semibold text-lg md:text-xl my-1">
-                      {driversWithdrawalAccount[0]?.account_number}
+                    
+                      {driversWithdrawalAccount ? driversWithdrawalAccount?.account_number : ""}
                     </p>
                     <p className="text-xs text-custom-black truncate">
-                      {driversWithdrawalAccount[0]?.bank}
+                    
+                      {driversWithdrawalAccount ? driversWithdrawalAccount.bank_name : ""}
                     </p>
                   </>
-                )}
               </div>
             </div>
             <AddDriverAccountDetail setIsUpdatingWallet={setIsUpdatingWallet} />
@@ -299,7 +296,7 @@ const CommutersHomePage = () => {
         </>
       )}
 
-      {transactionTableInfo && transactionTableInfo?.length !== 0 ? (
+      {role !== "admin" && transactionTableInfo && transactionTableInfo?.length !== 0 ? (
         <TransactionTable data={transactionTableInfo} />
       ) : (
         <ShortInformationContainer type={"transactions"} />
