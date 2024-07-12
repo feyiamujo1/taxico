@@ -80,7 +80,7 @@ const AddDriverAccountDetail = ({
         }
       );
       console.log(response);
-      if (response && response?.status === 204) {
+      if (response && response?.status === 201) {
         console.log("Details added -", response);
         successToast("Withdraw account details added successfully!");
         console.log("successful");

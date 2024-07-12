@@ -1,8 +1,10 @@
 "use client";
+
 import axios from "axios";
 import { Loader2 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { HiMiniArrowLongLeft } from "react-icons/hi2";
 import { errorToast, successToast } from "~/components/dashboard/ToastsProvider";
@@ -71,7 +73,8 @@ const PayDriverPage = () => {
         {
           sender_id: userInfo?.user_metadata?.sub || "",
           receiver_id: driversInfo?.id,
-          amount: (ticketNumber * 200).toFixed(1)
+          amount: (ticketNumber * 200).toFixed(1),
+          type: "Transfer",
         },
         {
           headers: {
@@ -81,14 +84,16 @@ const PayDriverPage = () => {
         }
       );
       console.log(response);
-      if (response && response?.status === 200) {
+      if (response && response?.status === 201) {
         console.log("Driver successfully paid ", response);
         console.log("successful");
+        successToast("Successfully paid driver")
         setDriversInfo(response.data[0]);
         setStage(1);
         setDriversInfo(null);
         setTicketNumber(1);
         setLoading(false);
+        // redirect("/dashboard");
       }
     } catch (error) {
       console.log(error);

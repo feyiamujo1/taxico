@@ -22,7 +22,7 @@ const TransactionsPage = () => {
     try {
       if (role !== "admin") {
         const response: any = await axios.get(
-          `https://${process.env.NEXT_PUBLIC_SUPABASE_REF}.supabase.co/rest/v1/transactions?select=*&id=eq.${userInfo?.user_metadata?.sub}`,
+          `https://${process.env.NEXT_PUBLIC_SUPABASE_REF}.supabase.co/rest/v1/transactions?select=*&or=(receiver_id.eq.${userInfo?.user_metadata?.sub},sender_id.eq.${userInfo?.user_metadata?.sub})`,
           {
             headers: {
               "Content-Type": "application/json",

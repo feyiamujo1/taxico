@@ -33,7 +33,7 @@ const TransactionTable = ({ data }: { data: TransactionsType[] | null }) => {
             <col style={{ width: "25%" }} />
             <col style={{ width: "15%" }} />
             <col style={{ width: "15%" }} />
-            <col style={{ width: "25%" }} />
+            {/* <col style={{ width: "25%" }} /> */}
             <col style={{ width: "15%" }} />
           </colgroup>
           <thead className="!text-left font-normal border-b-[0.5px]">
@@ -50,9 +50,9 @@ const TransactionTable = ({ data }: { data: TransactionsType[] | null }) => {
               <th className="py-4 font-medium text-sm md:text-base 2xl:text-lg pr-4 md:pr-2">
                 Type
               </th>
-              <th className="py-4 font-medium text-sm md:text-base 2xl:text-lg pr-4 md:pr-2">
+              {/* <th className="py-4 font-medium text-sm md:text-base 2xl:text-lg pr-4 md:pr-2">
                 Description
-              </th>
+              </th> */}
               <th className="py-4 font-medium text-sm md:text-base 2xl:text-lg">
                 Status
               </th>
@@ -75,15 +75,9 @@ const TransactionTable = ({ data }: { data: TransactionsType[] | null }) => {
                   {transaction?.amount}
                 </td>
                 <td className="py-3 text-sm 2xl:text-base capitalize text-nowrap pr-4 md:pr-2">
-                  {role === "admin" && transaction?.type === "wallet"
-                    ? "Transfer"
-                    : role === "commuter" && transaction?.type === "wallet"
-                    ? "Outgoing Transfer"
-                    : role === "driver" && transaction?.type === "wallet"
-                    ? "Incoming Transfer"
-                    : "Wallet Topup"}
+                  {transaction?.type}
                 </td>
-                <td className="py-3 text-sm 2xl:text-base text-nowrap pr-4 md:pr-2">
+                {/* <td className="py-3 text-sm 2xl:text-base text-nowrap pr-4 md:pr-2">
                   {role === "admin"
                     ? transaction?.sender_first_name +
                       " " +
@@ -101,7 +95,7 @@ const TransactionTable = ({ data }: { data: TransactionsType[] | null }) => {
                         " " +
                         transaction?.receiver_first_name || "Paystack"
                     : "Paystack"}
-                </td>
+                </td> */}
                 <td
                   className={`py-3 text-sm 2xl:text-base text-center text-nowrap`}>
                   <p

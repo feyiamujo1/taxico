@@ -27,15 +27,11 @@ const PaystackIntegration = ({ setIsUpdatingWallet, currentWalletBalance }) => {
     );
 
     try {
-      const response = await axios.patch(
-        `https://${process.env.NEXT_PUBLIC_SUPABASE_REF}.supabase.co/rest/v1/wallets?id=eq.${userInfo?.user_metadata?.sub}`,
+      const response = await axios.post(
+        `https://${process.env.NEXT_PUBLIC_SUPABASE_REF}.supabase.co/rest/v1/funding_events`,
         {
-          inflow: parseFloat(currentWalletBalance + inComingFund || 0).toFixed(
-            1
-          ),
-          balance: parseFloat(currentWalletBalance + inComingFund || 0).toFixed(
-            1
-          )
+          amount: parseFloat(inComingFund || 0).toFixed(2),
+          user_id: userInfo?.user_metadata?.sub
         },
         {
           headers: {
@@ -45,7 +41,7 @@ const PaystackIntegration = ({ setIsUpdatingWallet, currentWalletBalance }) => {
         }
       );
       console.log(response);
-      if (response && response?.status === 204) {
+      if (response && response?.status === 201) {
         console.log("Wallet topped up -", response);
         successToast("Account funded successfully!");
         setIsUpdatingWallet(true);

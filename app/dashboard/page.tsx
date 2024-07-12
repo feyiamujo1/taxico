@@ -55,7 +55,7 @@ const CommutersHomePage = () => {
     try {
       if (role !== "admin") {
         const response: any = await axios.get(
-          `https://${process.env.NEXT_PUBLIC_SUPABASE_REF}.supabase.co/rest/v1/wallets?select=*&id=eq.${userInfo?.user_metadata?.sub}`,
+          `https://${process.env.NEXT_PUBLIC_SUPABASE_REF}.supabase.co/rest/v1/wallets?select=*&user_id=eq.${userInfo?.user_metadata?.sub}`,
           {
             headers: {
               "Content-Type": "application/json",
@@ -65,10 +65,10 @@ const CommutersHomePage = () => {
         );
 
         if (response && response?.status === 200) {
-          console.log("Wallet Info -", response?.data);
+          console.log("Wallet Info -", response);
           setWalletInfo(response?.data);
           const responseTwo: any = await axios.get(
-            `https://${process.env.NEXT_PUBLIC_SUPABASE_REF}.supabase.co/rest/v1/transactions?select=*&id=eq.${userInfo?.user_metadata?.sub}`,
+            `https://${process.env.NEXT_PUBLIC_SUPABASE_REF}.supabase.co/rest/v1/transactions?select=*&or=(receiver_id.eq.${userInfo?.user_metadata?.sub},sender_id.eq.${userInfo?.user_metadata?.sub})`,
             {
               headers: {
                 "Content-Type": "application/json",
@@ -77,7 +77,7 @@ const CommutersHomePage = () => {
             }
           );
           if (responseTwo && responseTwo?.status === 200) {
-            console.log("Table info -", responseTwo?.data);
+            console.log("Table info -", responseTwo);
             setTransactionTableInfo(responseTwo?.data);
 
             if (role === "driver") {
@@ -91,8 +91,8 @@ const CommutersHomePage = () => {
                 }
               );
               if (responseThree && responseThree?.status === 200) {
-                console.log("Account details info -", responseThree?.data);
-                setDriversWithdrawalAccount(responseTwo?.data);
+                console.log("Account details info -", responseThree);
+                setDriversWithdrawalAccount(responseTwo?.data[0]);
               }
             }
           }
