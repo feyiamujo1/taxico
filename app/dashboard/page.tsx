@@ -258,7 +258,6 @@ const CommutersHomePage = () => {
               <div>
                   <>
                     <p className="font-semibold text-lg md:text-xl my-1">
-                    
                       {driversWithdrawalAccount ? driversWithdrawalAccount?.account_number : ""}
                     </p>
                     <p className="text-xs text-custom-black truncate">

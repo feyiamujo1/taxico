@@ -27,7 +27,7 @@ const TransactionTable = ({ data }: { data: TransactionsType[] | null }) => {
         )}
       </div>
       <div className="w-full overflow-x-scroll">
-        <table className="w-full table-auto ">
+       <table className="w-full table-auto "> 
           <colgroup>
             <col style={{ width: "5%" }} />
             <col style={{ width: "25%" }} />
